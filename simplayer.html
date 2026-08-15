@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Angu · Sim Player</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,#0d3560,#071728);color:#fff;overflow:hidden}
+body{display:flex;flex-direction:column}.hdr,.ftr{padding:11px 13px;display:flex;align-items:center;justify-content:space-between;background:#071421bb;backdrop-filter:blur(8px);font-weight:800}.hdr{border-bottom:1px solid #ffffff1e}.ftr{border-top:1px solid #ffffff1e;font-size:11px;opacity:.8}.stage{flex:1;display:grid;place-items:center;padding:16px;overflow:auto}.card{width:min(100%,430px);background:#102d4bd9;border:1px solid #ffffff24;border-radius:22px;padding:20px;box-shadow:0 16px 48px #0005;text-align:center}.badge{display:inline-block;background:#ffc52f;color:#112032;padding:6px 10px;border-radius:99px;font-weight:950;font-size:12px;letter-spacing:.06em}.name{font-size:26px;margin:10px 0}.muted{opacity:.7}.big{width:100%;padding:15px;border:0;border-radius:14px;font-weight:950;font-size:17px;margin-top:10px;cursor:pointer}.primary{background:#ffc52f;color:#172237}.dice{font-size:72px;width:140px;height:140px;border:0;border-radius:28px;background:#fff;color:#222;box-shadow:0 14px 35px #0005;cursor:pointer}.answers{display:grid;grid-template-columns:1fr;gap:10px}.ans{padding:14px;border:0;border-radius:12px;background:#eaf3ff;color:#14263b;font-weight:850;cursor:pointer}.buzz{width:180px;height:180px;border-radius:50%;border:10px solid #ffffff55;background:#ff4338;color:#fff;font-size:40px;font-weight:1000;box-shadow:0 12px 34px #0006;cursor:pointer}.judge{display:grid;grid-template-columns:1fr 1fr;gap:10px}.ok,.bad{padding:15px;border:0;border-radius:12px;color:#fff;font-weight:950}.ok{background:#25b96b}.bad{background:#d84242}.q{font-size:20px;line-height:1.35}.conn{font-size:12px}.conn.ok{color:#60ed9b}.conn.wait{color:#ffc35e}input{width:100%;padding:13px;border-radius:12px;border:1px solid #ffffff2d;background:#061625;color:#fff;font-size:16px}.prizes{font-size:24px;min-height:32px}
+</style>
+</head>
+<body>
+<header class="hdr"><span>🐾 ANGU SIM</span><span id="room">----</span><span id="conn" class="conn wait">●</span></header>
+<main id="stage" class="stage"></main>
+<footer class="ftr"><span id="ident">SIM</span><span>sim v0.1</span></footer>
+<script type="module" src="./simplayer.js"></script>
+</body>
+</html>
