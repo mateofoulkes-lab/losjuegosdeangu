@@ -3,8 +3,8 @@ import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.180.0/examples/
 import { joinRoom, selfId } from 'https://esm.sh/trystero@0.25.3';
 
 const APP_ID='soquetin-multiplayer-probe-2026';
-const COLORS=['#ff1744','#0066ff','#00d45a','#ffe000','#ff2fb3','#090909','#ffffff','#ffb000'];
-const COLOR_NAMES=['Rojo','Azul','Verde','Amarillo','Rosa','Negro','Blanco','Dorado'];
+const COLORS=['#ff1744','#0066ff','#009e43','#d8bd00','#ff2fb3','#090909','#ffffff','#8f35ff'];
+const COLOR_NAMES=['Rojo','Azul','Verde','Amarillo','Rosa','Negro','Blanco','Violeta'];
 const CATEGORIES=['mente','accion','palabra','creatividad','mentiras','grupo'];
 const CATEGORY_COLORS={mente:'#53b9f5',accion:'#ff5843',palabra:'#ffd54a',creatividad:'#72d54a',mentiras:'#b763e8',grupo:'#ff9a3c'};
 const ICONS={mente:'🧠',accion:'⚡',palabra:'💬',creatividad:'✏️',mentiras:'🎭',grupo:'👥'};
@@ -44,7 +44,7 @@ const trivia=[
 
 const cleanCode=v=>(v||'').toUpperCase().replace(/[^A-Z]/g,'').slice(0,4);
 const makeCode=()=>{const a='ABCDEFGHJKLMNPQRSTUVWXYZ';return Array.from({length:4},()=>a[Math.floor(Math.random()*a.length)]).join('')};
-const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const esc=s=>String(s??'').replace(/[&<>'\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));
 const me=()=>game.players.find(p=>p.token===playerToken);
 const current=()=>game.players[game.turn%Math.max(1,game.players.length)];
 const categoryFor=pos=>{const c=TRACK[((pos%TRACK_COUNT)+TRACK_COUNT)%TRACK_COUNT][2];return c==='start'?CATEGORIES[Math.floor(Math.random()*CATEGORIES.length)]:c};
@@ -130,7 +130,7 @@ function playerStatus(p){
  return{text:'ESPERANDO',cls:''};
 }
 function wheelBackground(p){const parts=[];CATEGORIES.forEach((cat,i)=>{const on=p.prizes.includes(cat),color=on?CATEGORY_COLORS[cat]:'#26374b',a=i*60,b=(i+1)*60;parts.push(`${color} ${a}deg ${b-2}deg`,`#0d1d31 ${b-2}deg ${b}deg`)});return`conic-gradient(${parts.join(',')})`}
-function playerCard(p){const s=playerStatus(p),color=Number.isInteger(p.color)?COLORS[p.color]:'#445166',ink=Number.isInteger(p.color)&&[3,6,7].includes(p.color)?'#101522':'#fff',piece=Number.isInteger(p.piece)?PIECES[p.piece]:null;const el=document.createElement('div');el.className=`player-card ${s.cls}`;el.style.setProperty('--player',color);el.style.setProperty('--player-ink',ink);el.innerHTML=`<div class="player-card-avatar">${piece?.icon||'❔'}</div><div class="player-card-main"><div class="player-name">${esc(p.name)}</div><div class="player-status"><span class="status-chip">${esc(s.text)}</span></div></div><div class="progress-wheel" style="background:${wheelBackground(p)}" title="Premios: ${p.prizes.length}/6"></div>`;return el}
+function playerCard(p){const s=playerStatus(p),color=Number.isInteger(p.color)?COLORS[p.color]:'#445166',ink=Number.isInteger(p.color)&&[3,6].includes(p.color)?'#101522':'#fff',piece=Number.isInteger(p.piece)?PIECES[p.piece]:null;const el=document.createElement('div');el.className=`player-card ${s.cls}`;el.style.setProperty('--player',color);el.style.setProperty('--player-ink',ink);el.innerHTML=`<div class="player-card-avatar">${piece?.icon||'❔'}</div><div class="player-card-main"><div class="player-name">${esc(p.name)}</div><div class="player-status"><span class="status-chip">${esc(s.text)}</span></div></div><div class="progress-wheel" style="background:${wheelBackground(p)}" title="Premios: ${p.prizes.length}/6"></div>`;return el}
 function renderPlayerPanels(){const left=$('#playersLeft'),right=$('#playersRight');if(!left||!right)return;left.innerHTML='';right.innerHTML='';const split=Math.ceil(game.players.length/2);game.players.forEach((p,i)=>(i<split?left:right).appendChild(playerCard(p)))}
 function renderHost(){renderPlayerPanels();const start=$('#startGameBtn');if(start){start.disabled=game.players.length<2||game.phase!=='lobby';start.textContent=game.players.length<2?'Esperando al menos 2 jugadores…':'Empezar partida'}renderHostInfo();refresh3DTokens()}
 function renderHostInfo(){
@@ -188,7 +188,7 @@ function renderPhone(){
  if(game.phase==='selection'){
    const usedColors=new Set(game.players.filter(x=>x.token!==p.token&&Number.isInteger(x.color)).map(x=>x.color));
    const usedPieces=new Set(game.players.filter(x=>x.token!==p.token&&Number.isInteger(x.piece)).map(x=>x.piece));
-   stage.innerHTML=`<div class="phone-card"><div class="setup-timer">${game.setupRemaining}s</div><h2 class="setup-title">Elegí tu ficha</h2><div class="piece-strip">${PIECES.map((pc,i)=>`<button class="piece-pick ${p.piece===i?'selected':''} ${usedPieces.has(i)?'taken':''}" data-piece="${i}"><span class="piece-icon">${pc.icon}</span><span class="piece-name">${esc(pc.name)}</span></button>`).join('')}</div><h2 class="setup-title" style="font-size:24px!important;margin-top:12px">Elegí tu color</h2><div class="color-grid">${COLORS.map((c,i)=>`<button class="setup-color ${p.color===i?'selected':''} ${usedColors.has(i)?'taken':''} ${[3,6,7].includes(i)?'light':''}" data-color="${i}" style="background:${c}">${COLOR_NAMES[i]}</button>`).join('')}</div><div class="setup-summary">${Number.isInteger(p.piece)?PIECES[p.piece].name:'Sin ficha'} · ${Number.isInteger(p.color)?COLOR_NAMES[p.color]:'Sin color'}</div></div>`;
+   stage.innerHTML=`<div class="phone-card"><div class="setup-timer">${game.setupRemaining}s</div><h2 class="setup-title">Elegí tu ficha</h2><div class="piece-strip">${PIECES.map((pc,i)=>`<button class="piece-pick ${p.piece===i?'selected':''} ${usedPieces.has(i)?'taken':''}" data-piece="${i}"><span class="piece-icon">${pc.icon}</span><span class="piece-name">${esc(pc.name)}</span></button>`).join('')}</div><h2 class="setup-title" style="font-size:24px!important;margin-top:12px">Elegí tu color</h2><div class="color-grid">${COLORS.map((c,i)=>`<button class="setup-color ${p.color===i?'selected':''} ${usedColors.has(i)?'taken':''} ${[3,6].includes(i)?'light':''}" data-color="${i}" style="background:${c}">${COLOR_NAMES[i]}</button>`).join('')}</div><div class="setup-summary">${Number.isInteger(p.piece)?PIECES[p.piece].name:'Sin ficha'} · ${Number.isInteger(p.color)?COLOR_NAMES[p.color]:'Sin color'}</div></div>`;
    stage.querySelectorAll('.piece-pick:not(.taken)').forEach(b=>b.onclick=()=>sendIntent('selectSetup',{piece:Number(b.dataset.piece)}));
    stage.querySelectorAll('.setup-color:not(.taken)').forEach(b=>b.onclick=()=>sendIntent('selectSetup',{color:Number(b.dataset.color)}));return;
  }
@@ -243,11 +243,11 @@ function refresh3DTokens(){
 function fallbackPiece(p){const o=new THREE.Mesh(new THREE.CylinderGeometry(.25,.32,.72,20),new THREE.MeshPhysicalMaterial({color:COLORS[p.color],roughness:.16,clearcoat:.55}));o.position.y=.36;o.userData.piece=p.piece;tokenGroup.add(o);tokenMeshes.set(p.token,o);repositionAllTokens(true)}
 function occupancyTargets(pos){
  const players=game.players.filter(p=>p.pos===pos&&tokenMeshes.has(p.token));if(!players.length)return new Map();
- const d=TRACK[pos],prev=TRACK[(pos+TRACK_COUNT-1)%TRACK_COUNT],next=TRACK[(pos+1)%TRACK_COUNT];const tangent=new THREE.Vector3(next[0]-prev[0],0,next[1]-prev[1]).normalize(),radial=new THREE.Vector3(-tangent.z,0,tangent.x);const maxFoot=Math.max(.5,...players.map(p=>tokenFootprint(tokenMeshes.get(p.token)))),step=maxFoot*1.12+.28,cols=players.length<=2?players.length:players.length<=4?2:3,rows=Math.ceil(players.length/cols),out=new Map();
+ const d=TRACK[pos],prev=TRACK[(pos+TRACK_COUNT-1)%TRACK_COUNT],next=TRACK[(pos+1)%TRACK_COUNT];const tangent=new THREE.Vector3(next[0]-prev[0],0,next[1]-prev[1]).normalize(),radial=new THREE.Vector3(-tangent.z,0,tangent.x);const maxFoot=Math.max(.5,...players.map(p=>tokenFootprint(tokenMeshes.get(p.token)))),step=(maxFoot*1.12+.28)*.5,cols=players.length<=2?players.length:players.length<=4?2:3,rows=Math.ceil(players.length/cols),out=new Map();
  players.forEach((p,i)=>{const row=Math.floor(i/cols),col=i%cols,usedCols=Math.min(cols,players.length-row*cols),a=(col-(usedCols-1)/2)*step,b=(row-(rows-1)/2)*step,x=d[0]+tangent.x*a+radial.x*b,z=d[1]+tangent.z*a+radial.z*b;out.set(p.token,new THREE.Vector3(x,surfaceYAt(x,z)+.012,z))});return out;
 }
 function repositionAllTokens(snap=true){if(!tokenMeshes.size)return;const positions=new Set(game.players.filter(p=>tokenMeshes.has(p.token)).map(p=>p.pos));positions.forEach(pos=>{for(const[token,target]of occupancyTargets(pos)){const o=tokenMeshes.get(token);if(!o)continue;if(snap)o.position.copy(target);else animateObject(o,target)}})}
 function animateObject(o,target){const from=o.position.clone(),start=performance.now(),dur=260;(function tick(){const t=Math.min(1,(performance.now()-start)/dur),e=1-Math.pow(1-t,3);o.position.lerpVectors(from,target,e);o.position.y=THREE.MathUtils.lerp(from.y,target.y,e)+Math.sin(t*Math.PI)*.35;if(t<1)requestAnimationFrame(tick)})()}
 function rollDice3D(value){if(!diceMesh)return;const start=performance.now(),base=diceMesh.position.clone();(function tick(){const t=Math.min(1,(performance.now()-start)/800);diceMesh.rotation.x+=.23;diceMesh.rotation.y+=.31;diceMesh.position.y=base.y+Math.sin(t*Math.PI)*2;if(t<1)requestAnimationFrame(tick);else{diceMesh.position.copy(base);toast(`🎲 ${value}`)}})()}
 
-console.log('Los juegos de Angu v0.3.0',{selfId,appId:APP_ID});
+console.log('Los juegos de Angu v0.3.1',{selfId,appId:APP_ID});
