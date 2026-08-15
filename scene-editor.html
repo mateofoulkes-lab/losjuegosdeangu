@@ -1,58 +1,31 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Los juegos de Angu · Editor de escena</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Los juegos de Angu · Editor final</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,system-ui,sans-serif;background:#071a35;color:#fff}button,input,select{font:inherit}.app{display:grid;grid-template-columns:300px 1fr;height:100vh}.panel{background:#081d38;border-right:1px solid #ffffff1d;padding:14px;overflow:auto;z-index:10}.panel h1{font-size:18px;margin:0 0 4px}.panel .sub{font-size:12px;opacity:.62;margin-bottom:14px}.group{background:#0d2a4d;border:1px solid #ffffff17;border-radius:14px;padding:11px;margin-bottom:10px}.group h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#ffd451;margin:0 0 9px}.objects{display:grid;gap:6px}.obj{width:100%;text-align:left;padding:8px 10px;border:1px solid #ffffff1a;border-radius:9px;background:#12345e;color:#fff;cursor:pointer}.obj.active{border-color:#ffd451;background:#19477d}.row{display:grid;grid-template-columns:23px 1fr 1fr 1fr;gap:5px;align-items:center;margin:5px 0}.row label{font-size:11px;opacity:.65}.row input{width:100%;min-width:0;background:#07182e;border:1px solid #ffffff1c;color:#fff;border-radius:7px;padding:6px}.toolbar{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.toolbar button,.wide{background:#153d6c;color:white;border:1px solid #ffffff22;border-radius:9px;padding:8px;cursor:pointer}.toolbar button.on{background:#e4b526;color:#122441;font-weight:800}.wide{width:100%;margin-top:6px}.copy{background:#ffd451!important;color:#132746!important;font-weight:900!important}.status{font:11px ui-monospace,monospace;white-space:pre-wrap;opacity:.7;margin-top:8px}.viewport{position:relative;min-width:0}.viewport canvas{display:block;width:100%;height:100%}.hint{position:absolute;right:12px;top:12px;background:#071a35d9;border:1px solid #ffffff20;border-radius:11px;padding:9px 11px;font-size:11px;line-height:1.45;pointer-events:none}.badge{position:absolute;left:12px;bottom:12px;background:#071a35d9;border-radius:999px;padding:8px 12px;font:11px ui-monospace,monospace}.divider{height:1px;background:#ffffff15;margin:9px 0}.check{display:flex;gap:8px;align-items:center;font-size:12px;margin:6px 0}@media(max-width:850px){.app{grid-template-columns:230px 1fr}.panel{padding:9px}}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,system-ui,sans-serif;background:#071a35;color:#fff}button,input{font:inherit}.app{display:grid;grid-template-columns:310px 1fr;height:100vh}.app.preview{grid-template-columns:0 1fr}.panel{background:#081d38;border-right:1px solid #ffffff1d;padding:14px;overflow:auto;z-index:30;transition:.2s}.app.preview .panel{overflow:hidden;padding:0;border:0}.panel h1{font-size:18px;margin:0 0 4px}.sub{font-size:12px;opacity:.62;margin-bottom:14px}.group{background:#0d2a4d;border:1px solid #ffffff17;border-radius:14px;padding:11px;margin-bottom:10px}.group h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#ffd451;margin:0 0 9px}.objects{display:grid;gap:5px}.obj{width:100%;text-align:left;padding:7px 9px;border:1px solid #ffffff1a;border-radius:9px;background:#12345e;color:#fff;cursor:pointer}.obj.active{border-color:#ffd451;background:#19477d}.token-obj{border-left:4px solid var(--c)}.row{display:grid;grid-template-columns:23px 1fr 1fr 1fr;gap:5px;align-items:center;margin:5px 0}.row label{font-size:11px;opacity:.65}.row input{width:100%;min-width:0;background:#07182e;border:1px solid #ffffff1c;color:#fff;border-radius:7px;padding:6px}.toolbar{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.toolbar button,.wide{background:#153d6c;color:white;border:1px solid #ffffff22;border-radius:9px;padding:8px;cursor:pointer}.toolbar button.on{background:#e4b526;color:#122441;font-weight:800}.wide{width:100%;margin-top:6px}.copy{background:#ffd451!important;color:#132746!important;font-weight:900!important}.status{font:11px ui-monospace,monospace;white-space:pre-wrap;opacity:.7;margin-top:8px}.viewport{position:relative;min-width:0;overflow:hidden}.viewport canvas{display:block;width:100%;height:100%}.hint{position:absolute;right:12px;top:12px;background:#071a35d9;border:1px solid #ffffff20;border-radius:11px;padding:9px 11px;font-size:11px;line-height:1.45;pointer-events:none;z-index:15}.previewBtn{position:absolute;left:12px;bottom:12px;z-index:20;background:#071a35e8;color:#fff;border:1px solid #ffffff25;border-radius:999px;padding:9px 14px;cursor:pointer}.hud{position:absolute;inset:0;z-index:10;pointer-events:none}.topHud{position:absolute;left:18px;right:18px;top:14px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;text-shadow:0 2px 6px #000}.room{background:#071a35dd;border:2px solid #ffd451;border-radius:999px;padding:8px 13px}.playerSide{position:absolute;top:62px;bottom:62px;width:205px;display:flex;flex-direction:column;justify-content:center;gap:9px}.playerSide.left{left:12px}.playerSide.right{right:12px}.pCard{height:min(118px,calc((100vh - 150px)/4));min-height:72px;border-radius:18px;padding:8px;background:linear-gradient(135deg,color-mix(in srgb,var(--pc) 92%,#000),color-mix(in srgb,var(--pc) 58%,#071a35));border:2px solid #ffffff38;box-shadow:0 8px 20px #0007;display:grid;grid-template-columns:54px 1fr 50px;align-items:center;gap:7px;position:relative;overflow:hidden}.pCard.active{animation:cardGlow 1.2s ease-in-out infinite;border-color:#fff}.avatar{width:50px;height:50px;border-radius:14px;background:#ffffff24;display:grid;place-items:center;font-size:26px;border:1px solid #ffffff38}.pName{font-weight:1000;font-size:15px;text-shadow:0 2px 5px #000}.pState{font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;margin-top:3px;opacity:.92}.wheel{width:46px;aspect-ratio:1;border-radius:50%;background:conic-gradient(#48aef7 0 60deg,#ff4c3e 60deg 120deg,#ffd43b 120deg 180deg,#6fd13a 180deg 240deg,#a45ee6 240deg 300deg,#ff922d 300deg 360deg);mask:radial-gradient(circle at center,transparent 0 33%,#000 35%)}.wheel.off{filter:saturate(.18) brightness(.46)}.centerMsg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(340px,32vw);background:#092345e8;border:1px solid #ffffff25;border-radius:24px;padding:15px 18px;text-align:center;box-shadow:0 20px 50px #0008}.centerMsg b{color:#ffd451}.centerMsg .small{font-size:11px;opacity:.72}.check{display:flex;gap:8px;align-items:center;font-size:12px;margin:6px 0}@keyframes cardGlow{50%{box-shadow:0 0 28px #fff8,0 8px 24px #0008;transform:scale(1.015)}}@media(max-width:1100px){.playerSide{width:165px}.pCard{grid-template-columns:44px 1fr 40px}.avatar{width:40px;height:40px}.wheel{width:38px}.pName{font-size:12px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
 </head>
 <body>
-<div class="app">
-<aside class="panel">
-  <h1>🐾 Editor de escena</h1>
-  <div class="sub">Los juegos de Angu · v0.1</div>
-
-  <div class="group">
-    <h2>Objetos</h2>
-    <div id="objects" class="objects"></div>
-  </div>
-
-  <div class="group">
-    <h2>Herramienta</h2>
-    <div class="toolbar"><button id="moveBtn" class="on">Mover W</button><button id="rotBtn">Rotar E</button><button id="scaleBtn">Escala R</button></div>
-    <button id="focusBtn" class="wide">Enfocar seleccionado · F</button>
-    <label class="check"><input id="localCheck" type="checkbox"> ejes locales</label>
-  </div>
-
-  <div class="group">
-    <h2>Transform</h2>
-    <div class="row"><label>P</label><input id="px" type="number" step="0.05"><input id="py" type="number" step="0.05"><input id="pz" type="number" step="0.05"></div>
-    <div class="row"><label>R°</label><input id="rx" type="number" step="1"><input id="ry" type="number" step="1"><input id="rz" type="number" step="1"></div>
-    <div class="row"><label>S</label><input id="sx" type="number" step="0.05"><input id="sy" type="number" step="0.05"><input id="sz" type="number" step="0.05"></div>
-    <button id="resetBtn" class="wide">Reset seleccionado</button>
-  </div>
-
-  <div class="group">
-    <h2>Cámara final</h2>
-    <div class="row"><label>P</label><input id="cx" type="number" step="0.1"><input id="cy" type="number" step="0.1"><input id="cz" type="number" step="0.1"></div>
-    <div class="row"><label>T</label><input id="tx" type="number" step="0.1"><input id="ty" type="number" step="0.1"><input id="tz" type="number" step="0.1"></div>
-    <div class="row"><label>FOV</label><input id="fov" type="number" step="1"><span></span><span></span></div>
-    <button id="cameraTopBtn" class="wide">Preset más cenital</button>
-  </div>
-
-  <div class="group">
-    <h2>Salida</h2>
-    <button id="copyBtn" class="wide copy">Copiar configuración</button>
-    <button id="downloadBtn" class="wide">Mostrar texto</button>
-    <div id="status" class="status">Cargando modelos…</div>
-  </div>
+<div class="app" id="app">
+<aside class="panel" id="panel">
+<h1>🐾 Editor de escena final</h1><div class="sub">Escena + fichas · materiales plásticos</div>
+<div class="group"><h2>Objetos / fichas</h2><div id="objects" class="objects"></div></div>
+<div class="group"><h2>Herramienta</h2><div class="toolbar"><button id="moveBtn" class="on">Mover W</button><button id="rotBtn">Rotar E</button><button id="scaleBtn">Escala R</button></div><button id="focusBtn" class="wide">Enfocar · F</button><label class="check"><input id="localCheck" type="checkbox"> ejes locales</label></div>
+<div class="group"><h2>Transform</h2><div class="row"><label>P</label><input id="px" type="number" step=".05"><input id="py" type="number" step=".05"><input id="pz" type="number" step=".05"></div><div class="row"><label>R°</label><input id="rx" type="number" step="1"><input id="ry" type="number" step="1"><input id="rz" type="number" step="1"></div><div class="row"><label>S</label><input id="sx" type="number" step=".05"><input id="sy" type="number" step=".05"><input id="sz" type="number" step=".05"></div><button id="resetBtn" class="wide">Reset seleccionado</button></div>
+<div class="group"><h2>Cámara final</h2><div class="row"><label>P</label><input id="cx"><input id="cy"><input id="cz"></div><div class="row"><label>T</label><input id="tx"><input id="ty"><input id="tz"></div><div class="row"><label>FOV</label><input id="fov"><span></span><span></span></div><button id="restoreCameraBtn" class="wide">Restaurar cámara aprobada</button></div>
+<div class="group"><h2>Salida</h2><button id="copyBtn" class="wide copy">Copiar configuración</button><button id="previewSideBtn" class="wide">Vista final sin editor</button><div id="status" class="status">Cargando…</div></div>
 </aside>
 <main class="viewport" id="viewport">
-  <div class="hint"><b>Mouse izq.</b> orbitar cámara<br><b>Rueda</b> zoom<br><b>Mouse der.</b> desplazar<br><b>W / E / R</b> mover · rotar · escala<br><b>F</b> enfocar objeto</div>
-  <div class="badge">La cámara que dejás acá será la cámara final</div>
+<div class="hud">
+ <div class="topHud"><span>🐾 LOS JUEGOS DE ANGU</span><span class="room">SALA TEST</span><span>conectado · editor</span></div>
+ <div class="playerSide left" id="leftCards"></div><div class="playerSide right" id="rightCards"></div>
+ <div class="centerMsg"><b>VISTA DE REFERENCIA</b><div class="small">Las cards representan la pantalla final. Las fichas 3D están distribuidas en casillas diferentes para comparar tamaños.</div></div>
+</div>
+<div class="hint"><b>Mouse izq.</b> orbitar<br><b>Rueda</b> zoom<br><b>Mouse der.</b> desplazar<br><b>W/E/R</b> mover · rotar · escalar<br><b>F</b> enfocar</div>
+<button class="previewBtn" id="floatingPreviewBtn">Vista final</button>
 </main>
 </div>
 <script type="module">
@@ -61,77 +34,57 @@ import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {TransformControls} from 'three/addons/controls/TransformControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 
-const viewport=document.getElementById('viewport');
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;renderer.shadowMap.enabled=true;viewport.prepend(renderer.domElement);
+const $=id=>document.getElementById(id), viewport=$('viewport'), app=$('app');
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;renderer.shadowMap.enabled=true;viewport.prepend(renderer.domElement);
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0b3154);
-const camera=new THREE.PerspectiveCamera(36,1,.05,300);camera.position.set(0,18,15);camera.lookAt(0,0,0);
-const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.dampingFactor=.08;orbit.target.set(0,0,0);orbit.maxPolarAngle=Math.PI*.49;orbit.minDistance=2;orbit.maxDistance=80;
-const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.8);scene.add(transform.getHelper());transform.addEventListener('dragging-changed',e=>orbit.enabled=!e.value);
+const camera=new THREE.PerspectiveCamera(36,1,.05,300);const approvedCamera={p:[.1297,20.0875,13.6093],t:[.1297,-.1064,.6808],fov:36};camera.position.fromArray(approvedCamera.p);
+const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.dampingFactor=.08;orbit.target.fromArray(approvedCamera.t);orbit.maxPolarAngle=Math.PI*.495;orbit.minDistance=2;orbit.maxDistance=80;
+const transform=new TransformControls(camera,renderer.domElement);transform.setSize(.72);scene.add(transform.getHelper());transform.addEventListener('dragging-changed',e=>orbit.enabled=!e.value);
 scene.add(new THREE.HemisphereLight(0xfff0ce,0x183757,2.7));const sun=new THREE.DirectionalLight(0xffdf9a,3.4);sun.position.set(-8,16,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
-const grid=new THREE.GridHelper(30,30,0x79b3dd,0x315d79);grid.position.y=-.005;grid.material.opacity=.16;grid.material.transparent=true;scene.add(grid);
+const loader=new GLTFLoader(), texLoader=new THREE.TextureLoader(), objects=new Map(), defaults=new Map();let selected=null;
+const palette=['#33aaff','#ff4638','#ffd33d','#65d33e','#a55cea','#ff8a2a','#19c7c0','#ff5ca8','#8ec63f','#b77a4a'];
 
-const loader=new GLTFLoader(), texLoader=new THREE.TextureLoader();
-const objects=new Map();let selected=null;
-const defaults={
- TABLERO:{url:'./TABLERO.glb',p:[0,.22,0],r:[0,0,0],s:[7.2,7.2,7.2]},
- CUCHA:{url:'./CUCHA.glb',p:[-7.4,.05,-2.9],r:[0,-.35,0],s:[1.7,1.7,1.7]},
- PLATO:{url:'./PLATO.glb',p:[7.3,.05,-2.2],r:[0,.15,0],s:[1,1,1]},
- PELOTA:{url:'./PELOTA.glb',p:[6.6,.05,3.6],r:[0,0,0],s:[.75,.75,.75]},
- JUGUETE:{url:'./JUGUETE.glb',p:[-6.7,.05,3.8],r:[0,.35,0],s:[1,1,1]},
- PIN1:{url:'./pin.glb',p:[0,.45,-4.4],r:[0,0,0],s:[.42,.42,.42]},
- PIN2:{url:'./pin.glb',p:[.45,.45,-4.4],r:[0,0,0],s:[.42,.42,.42]},
- PIN3:{url:'./pin.glb',p:[.9,.45,-4.4],r:[0,0,0],s:[.42,.42,.42]},
- PIN4:{url:'./pin.glb',p:[1.35,.45,-4.4],r:[0,0,0],s:[.42,.42,.42]},
- PREMIO:{url:'./prize.glb',p:[3,.4,0],r:[0,0,0],s:[.5,.5,.5]}
-};
-
-function applyTransform(o,d){o.position.fromArray(d.p);o.rotation.set(...d.r);o.scale.fromArray(d.s)}
-function addListButton(name){const b=document.createElement('button');b.className='obj';b.textContent=name;b.onclick=()=>selectObject(name);document.getElementById('objects').appendChild(b);return b}
-
-// Mesa: un plano real con FONDO.jpg, independiente del GLB del tablero.
-const tableTex=texLoader.load('./FONDO.jpg');tableTex.colorSpace=THREE.SRGBColorSpace;tableTex.wrapS=tableTex.wrapT=THREE.RepeatWrapping;tableTex.repeat.set(1.25,1);
-const table=new THREE.Mesh(new THREE.PlaneGeometry(24,15),new THREE.MeshStandardMaterial({map:tableTex,roughness:.87,metalness:0}));table.rotation.x=-Math.PI/2;table.position.y=-.08;table.receiveShadow=true;table.userData.editorName='MESA';scene.add(table);objects.set('MESA',table);addListButton('MESA');
-
-for(const [name,d] of Object.entries(defaults)){
- const btn=addListButton(name);btn.disabled=true;
- loader.load(d.url,g=>{
-   const o=g.scene;o.userData.editorName=name;applyTransform(o,d);o.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true}});scene.add(o);objects.set(name,o);btn.disabled=false;document.getElementById('status').textContent=`Cargado: ${objects.size-1}/${Object.keys(defaults).length}`;
-   if(name==='TABLERO')selectObject(name);
- },undefined,err=>{btn.textContent=name+' ⚠';btn.disabled=false;console.error(name,err)});
-}
-
-function selectObject(name){const o=objects.get(name);if(!o)return;selected=o;transform.attach(o);document.querySelectorAll('.obj').forEach(b=>b.classList.toggle('active',b.textContent.replace(' ⚠','')===name));syncInputs()}
 function deg(r){return THREE.MathUtils.radToDeg(r)}function rad(d){return THREE.MathUtils.degToRad(Number(d)||0)}
-const ids=['px','py','pz','rx','ry','rz','sx','sy','sz'];
-function syncInputs(){if(!selected)return;const p=selected.position,r=selected.rotation,s=selected.scale;px.value=p.x.toFixed(3);py.value=p.y.toFixed(3);pz.value=p.z.toFixed(3);rx.value=deg(r.x).toFixed(1);ry.value=deg(r.y).toFixed(1);rz.value=deg(r.z).toFixed(1);sx.value=s.x.toFixed(3);sy.value=s.y.toFixed(3);sz.value=s.z.toFixed(3)}
-function applyInputs(){if(!selected)return;selected.position.set(+px.value,+py.value,+pz.value);selected.rotation.set(rad(rx.value),rad(ry.value),rad(rz.value));selected.scale.set(+sx.value,+sy.value,+sz.value)}
-ids.forEach(id=>document.getElementById(id).addEventListener('change',applyInputs));transform.addEventListener('objectChange',syncInputs);
+function setTransform(o,p,rDeg,s){o.position.fromArray(p);o.rotation.set(...rDeg.map(rad));o.scale.fromArray(s)}
+function addButton(name,isToken=false,color=''){const b=document.createElement('button');b.className='obj'+(isToken?' token-obj':'');if(isToken)b.style.setProperty('--c',color);b.textContent=name;b.onclick=()=>selectObject(name);$('objects').appendChild(b);return b}
+function register(name,o,def,isToken=false,color=''){o.userData.editorName=name;scene.add(o);objects.set(name,o);defaults.set(name,def);addButton(name,isToken,color)}
 
-function setMode(mode){transform.setMode(mode);moveBtn.classList.toggle('on',mode==='translate');rotBtn.classList.toggle('on',mode==='rotate');scaleBtn.classList.toggle('on',mode==='scale')}
-moveBtn.onclick=()=>setMode('translate');rotBtn.onclick=()=>setMode('rotate');scaleBtn.onclick=()=>setMode('scale');localCheck.onchange=()=>transform.setSpace(localCheck.checked?'local':'world');
-function focusSelected(){if(!selected)return;const box=new THREE.Box3().setFromObject(selected),center=new THREE.Vector3(),size=new THREE.Vector3();box.getCenter(center);box.getSize(size);orbit.target.copy(center);const d=Math.max(size.length()*1.4,2);const dir=camera.position.clone().sub(orbit.target).normalize();camera.position.copy(center).add(dir.multiplyScalar(d));orbit.update()}
-focusBtn.onclick=focusSelected;
-resetBtn.onclick=()=>{if(!selected)return;const n=selected.userData.editorName;if(n==='MESA'){selected.position.set(0,-.08,0);selected.rotation.set(-Math.PI/2,0,0);selected.scale.set(1,1,1)}else if(defaults[n])applyTransform(selected,defaults[n]);syncInputs()};
+// Mesa final
+const tableTex=texLoader.load('./FONDO.jpg');tableTex.colorSpace=THREE.SRGBColorSpace;tableTex.wrapS=tableTex.wrapT=THREE.RepeatWrapping;tableTex.repeat.set(1.25,1);
+const table=new THREE.Mesh(new THREE.PlaneGeometry(24,15),new THREE.MeshStandardMaterial({map:tableTex,roughness:.88,metalness:0}));table.receiveShadow=true;setTransform(table,[0,-.08,0],[-90,0,0],[2.701,2.701,2.701]);register('MESA',table,{p:[0,-.08,0],r:[-90,0,0],s:[2.701,2.701,2.701]});
 
-function syncCameraFields(){cx.value=camera.position.x.toFixed(3);cy.value=camera.position.y.toFixed(3);cz.value=camera.position.z.toFixed(3);tx.value=orbit.target.x.toFixed(3);ty.value=orbit.target.y.toFixed(3);tz.value=orbit.target.z.toFixed(3);fov.value=camera.fov.toFixed(1)}
-orbit.addEventListener('change',syncCameraFields);syncCameraFields();
-['cx','cy','cz','tx','ty','tz','fov'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{camera.position.set(+cx.value,+cy.value,+cz.value);orbit.target.set(+tx.value,+ty.value,+tz.value);camera.fov=+fov.value;camera.updateProjectionMatrix();orbit.update()}));
-cameraTopBtn.onclick=()=>{camera.position.set(0,20,9.5);orbit.target.set(0,0,0);camera.fov=36;camera.updateProjectionMatrix();orbit.update();syncCameraFields()};
+const sceneDefs={
+ TABLERO:{url:'./TABLERO.glb',p:[0,.2985,0],r:[0,0,0],s:[.7664,.7664,.7664]},
+ CUCHA:{url:'./CUCHA.glb',p:[-11.2508,.3856,-7.4391],r:[0,-33.589,0],s:[1.1885,1.1885,1.1885]},
+ PLATO:{url:'./PLATO.glb',p:[13.2215,.3357,-5.6536],r:[180,-77.825,180],s:[1,1,1]},
+ PELOTA:{url:'./PELOTA.glb',p:[-11.625,.05,-4.7434],r:[0,0,0],s:[.75,.75,.75]},
+ JUGUETE:{url:'./JUGUETE.glb',p:[4.056,.1706,6.1407],r:[0,20.054,0],s:[1.4484,1.4484,1.4484]},
+ PREMIO:{url:'./prize.glb',p:[.1605,.4737,6.1807],r:[0,0,0],s:[.5,.5,.5]}
+};
+for(const [name,d] of Object.entries(sceneDefs))loader.load(d.url,g=>{const o=g.scene;setTransform(o,d.p,d.r,d.s);o.traverse(n=>{if(n.isMesh){n.castShadow=true;n.receiveShadow=true}});register(name,o,{p:d.p,r:d.r,s:d.s});if(name==='TABLERO')selectObject(name)},undefined,e=>console.error(name,e));
 
-function vec(v){return [v.x,v.y,v.z].map(n=>+n.toFixed(4))}
-function exportConfig(){
- const out={camera:{position:vec(camera.position),target:vec(orbit.target),fov:+camera.fov.toFixed(2)},objects:{}};
- for(const [name,o] of objects){out.objects[name]={position:vec(o.position),rotationDeg:[deg(o.rotation.x),deg(o.rotation.y),deg(o.rotation.z)].map(n=>+n.toFixed(3)),scale:vec(o.scale)}}
- return `LOS JUEGOS DE ANGU · SCENE CONFIG\n${JSON.stringify(out,null,2)}`;
-}
-copyBtn.onclick=async()=>{const t=exportConfig();try{await navigator.clipboard.writeText(t);status.textContent='✓ Configuración copiada. Pegámela en ChatGPT.'}catch{status.textContent=t}};
-downloadBtn.onclick=()=>{status.textContent=exportConfig()};
+const tokenDefs=[['AUTO','auto.glb'],['CAÑON','canon.glb'],['CARRETILLA','carretilla.glb'],['CASA','casa.glb'],['DEDAL','dedal.glb'],['PATITO','patito.glb'],['PERRO','perro.glb'],['PLANCHA','plancha.glb'],['SOMBRERO','sombrero.glb'],['TREN','tren.glb']];
+function trackPos(idx){const a=-Math.PI/2+(idx/30)*Math.PI*2;return [Math.cos(a)*6.15,.54,Math.sin(a)*3.85]}
+function normalizeToken(root,target=.72){root.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(root),size=new THREE.Vector3(),center=new THREE.Vector3();box.getSize(size);box.getCenter(center);const max=Math.max(size.x,size.y,size.z)||1;const scale=target/max;root.scale.setScalar(scale);root.updateMatrixWorld(true);const b2=new THREE.Box3().setFromObject(root),c2=new THREE.Vector3();b2.getCenter(c2);root.position.x-=c2.x;root.position.z-=c2.z;root.position.y-=b2.min.y;}
+function makePlastic(root,color){const mat=new THREE.MeshStandardMaterial({color,roughness:.28,metalness:.04});root.traverse(n=>{if(n.isMesh){n.material=mat;n.castShadow=true;n.receiveShadow=true}})}
+tokenDefs.forEach(([name,file],i)=>loader.load('./3dmodels/'+file,g=>{const visual=g.scene;normalizeToken(visual,.72);makePlastic(visual,palette[i]);const wrap=new THREE.Group();wrap.add(visual);const p=trackPos(i*3);wrap.position.fromArray(p);wrap.userData.tokenModel=file;const def={p:[...p],r:[0,0,0],s:[1,1,1]};register('FICHA_'+name,wrap,def,true,palette[i]);$('status').textContent=`Fichas cargadas: ${[...objects.keys()].filter(x=>x.startsWith('FICHA_')).length}/${tokenDefs.length}`},undefined,e=>console.error(file,e)));
+
+function selectObject(name){const o=objects.get(name);if(!o)return;selected=o;transform.attach(o);document.querySelectorAll('.obj').forEach(b=>b.classList.toggle('active',b.textContent===name));syncInputs()}
+const inputIds=['px','py','pz','rx','ry','rz','sx','sy','sz'];
+function syncInputs(){if(!selected)return;const p=selected.position,r=selected.rotation,s=selected.scale;$('px').value=p.x.toFixed(3);$('py').value=p.y.toFixed(3);$('pz').value=p.z.toFixed(3);$('rx').value=deg(r.x).toFixed(1);$('ry').value=deg(r.y).toFixed(1);$('rz').value=deg(r.z).toFixed(1);$('sx').value=s.x.toFixed(3);$('sy').value=s.y.toFixed(3);$('sz').value=s.z.toFixed(3)}
+function applyInputs(){if(!selected)return;selected.position.set(+$('px').value,+$('py').value,+$('pz').value);selected.rotation.set(rad($('rx').value),rad($('ry').value),rad($('rz').value));selected.scale.set(+$('sx').value,+$('sy').value,+$('sz').value)}inputIds.forEach(id=>$(id).addEventListener('change',applyInputs));transform.addEventListener('objectChange',syncInputs);
+function setMode(m){transform.setMode(m);$('moveBtn').classList.toggle('on',m==='translate');$('rotBtn').classList.toggle('on',m==='rotate');$('scaleBtn').classList.toggle('on',m==='scale')}$('moveBtn').onclick=()=>setMode('translate');$('rotBtn').onclick=()=>setMode('rotate');$('scaleBtn').onclick=()=>setMode('scale');$('localCheck').onchange=()=>transform.setSpace($('localCheck').checked?'local':'world');
+function focusSelected(){if(!selected)return;const box=new THREE.Box3().setFromObject(selected),center=new THREE.Vector3(),size=new THREE.Vector3();box.getCenter(center);box.getSize(size);orbit.target.copy(center);const d=Math.max(size.length()*2,2);camera.position.copy(center).add(new THREE.Vector3(0,d*.8,d));orbit.update()}$('focusBtn').onclick=focusSelected;
+$('resetBtn').onclick=()=>{if(!selected)return;const d=defaults.get(selected.userData.editorName);if(d)setTransform(selected,d.p,d.r,d.s);syncInputs()};
+function syncCamera(){['x','y','z'].forEach((k,i)=>$( ['cx','cy','cz'][i]).value=camera.position[k].toFixed(3));['x','y','z'].forEach((k,i)=>$( ['tx','ty','tz'][i]).value=orbit.target[k].toFixed(3));$('fov').value=camera.fov.toFixed(1)}orbit.addEventListener('change',syncCamera);syncCamera();
+['cx','cy','cz','tx','ty','tz','fov'].forEach(id=>$(id).addEventListener('change',()=>{camera.position.set(+$('cx').value,+$('cy').value,+$('cz').value);orbit.target.set(+$('tx').value,+$('ty').value,+$('tz').value);camera.fov=+$('fov').value;camera.updateProjectionMatrix();orbit.update()}));$('restoreCameraBtn').onclick=()=>{camera.position.fromArray(approvedCamera.p);orbit.target.fromArray(approvedCamera.t);camera.fov=approvedCamera.fov;camera.updateProjectionMatrix();orbit.update();syncCamera()};
+function vec(v){return [v.x,v.y,v.z].map(n=>+n.toFixed(4))}function exportConfig(){const out={camera:{position:vec(camera.position),target:vec(orbit.target),fov:+camera.fov.toFixed(2)},objects:{}};for(const [name,o] of objects)out.objects[name]={position:vec(o.position),rotationDeg:[deg(o.rotation.x),deg(o.rotation.y),deg(o.rotation.z)].map(n=>+n.toFixed(3)),scale:vec(o.scale),model:o.userData.tokenModel||undefined};return `LOS JUEGOS DE ANGU · FINAL SCENE + TOKENS\n${JSON.stringify(out,null,2)}`}$('copyBtn').onclick=async()=>{const t=exportConfig();try{await navigator.clipboard.writeText(t);$('status').textContent='✓ Copiado. Pegámelo en el chat.'}catch{$('status').textContent=t}};
+function togglePreview(){app.classList.toggle('preview');const p=app.classList.contains('preview');$('floatingPreviewBtn').textContent=p?'Volver a editar':'Vista final';setTimeout(resize,220)}$('previewSideBtn').onclick=togglePreview;$('floatingPreviewBtn').onclick=togglePreview;
+
+const sample=[['SIM 1','#33aaff','EN TURNO','🚗',true],['SIM 2','#ff4638','LEE PREGUNTA','🦆',false],['SIM 3','#65d33e','ESPERANDO','🏠',false],['SIM 4','#ffd33d','ESPERANDO','🎩',false],['SIM 5','#a55cea','RESPONDE','🚂',false],['SIM 6','#ff8a2a','JURADO','🐶',false],['SIM 7','#19c7c0','BUZZER LISTO','🛒',false],['SIM 8','#ff5ca8','ESPERANDO','🧵',false]];
+function card([n,c,s,ico,a],i){return `<div class="pCard ${a?'active':''}" style="--pc:${c}"><div class="avatar">${ico}</div><div><div class="pName">${n}</div><div class="pState">${s}</div></div><div class="wheel ${i%3?'off':''}"></div></div>`}$('leftCards').innerHTML=sample.slice(0,4).map(card).join('');$('rightCards').innerHTML=sample.slice(4).map((x,i)=>card(x,i+4)).join('');
 
 document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if(e.code==='KeyW')setMode('translate');if(e.code==='KeyE')setMode('rotate');if(e.code==='KeyR')setMode('scale');if(e.code==='KeyF')focusSelected()});
-
-function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}addEventListener('resize',resize);resize();
-(function loop(){requestAnimationFrame(loop);orbit.update();renderer.render(scene,camera)})();
+function resize(){const w=viewport.clientWidth,h=viewport.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}addEventListener('resize',resize);resize();(function loop(){requestAnimationFrame(loop);orbit.update();renderer.render(scene,camera)})();
 </script>
-</body>
-</html>
+</body></html>
