@@ -16,64 +16,68 @@
   </script>
 </head>
 <body>
-  <div id="app">
-    <section id="homeView" class="view active">
-      <div class="hero-card">
-        <img class="angu-photo" src="./FOTO.jpg" alt="Angu" />
-        <div class="hero-copy">
-          <p class="eyebrow">Diseñado por Angu 🐾</p>
-          <h1>Los juegos de Angu</h1>
-          <p class="lede">Un party game para una pantalla grande y muchos celulares.</p>
-          <div class="home-actions">
-            <button id="createRoomBtn" class="primary big">Crear sala en esta pantalla</button>
-            <div class="join-box">
-              <input id="roomCodeInput" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="CÓDIGO" />
-              <button id="joinRoomBtn">Entrar con celular</button>
-            </div>
+<div id="app">
+  <section id="homeView" class="view active">
+    <div class="hero-card">
+      <img class="angu-photo" src="./FOTO.jpg" alt="Angu" />
+      <div class="hero-copy">
+        <p class="eyebrow">Diseñado por Angu 🐾</p>
+        <h1>Los juegos de Angu</h1>
+        <p class="lede">Un party game para una pantalla grande y muchos celulares.</p>
+        <div class="home-actions">
+          <button id="createRoomBtn" class="primary big">Crear sala en esta pantalla</button>
+          <div class="join-box">
+            <input id="roomCodeInput" maxlength="4" autocomplete="off" autocapitalize="characters" placeholder="CÓDIGO" />
+            <button id="joinRoomBtn">Entrar con celular</button>
           </div>
-          <p class="small muted">La pantalla que crea la sala será el tablero/admin. Los celulares se mantienen conectados aunque cambie la pantalla interna del juego.</p>
         </div>
+        <p class="small muted">La pantalla que crea la sala será el tablero/admin. Los celulares se mantienen conectados aunque cambie la pantalla interna del juego.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="hostView" class="view host-view">
-      <div id="sceneWrap"><canvas id="gameCanvas"></canvas></div>
-      <header class="host-hud">
-        <div class="brand-mini">🐾 LOS JUEGOS DE ANGU</div>
-        <div class="room-chip">SALA <strong id="hostRoomCode">----</strong></div>
-        <div id="hostStatus" class="status-dot">conectando…</div>
-      </header>
-      <aside id="playerRail" class="player-rail"></aside>
-      <div id="hostCenterCard" class="host-center-card">
-        <div id="hostLobby">
-          <img src="./FOTO.jpg" alt="Angu" class="lobby-photo" />
-          <h2>Que empiece la diversión</h2>
-          <p>Que todos entren con el código de sala.</p>
-          <div id="qrBox" class="qr-box"></div>
-          <button id="startGameBtn" class="primary big" disabled>Empezar partida</button>
-        </div>
-        <div id="hostGameInfo" class="hidden"></div>
+  <section id="hostView" class="view host-view">
+    <div id="sceneWrap"><canvas id="gameCanvas"></canvas></div>
+
+    <header class="host-hud">
+      <div class="brand-mini">🐾 LOS JUEGOS DE ANGU</div>
+      <div class="room-chip">SALA <strong id="hostRoomCode">----</strong></div>
+      <div id="hostStatus" class="status-dot">conectando…</div>
+    </header>
+
+    <aside id="playersLeft" class="player-panel player-panel-left"></aside>
+    <aside id="playersRight" class="player-panel player-panel-right"></aside>
+
+    <div id="hostCenterCard" class="host-center-card">
+      <div id="hostLobby">
+        <img src="./FOTO.jpg" alt="Angu" class="lobby-photo" />
+        <h2>Que empiece la diversión</h2>
+        <p>Que todos entren con el código de sala.</p>
+        <div id="qrBox" class="qr-box"></div>
+        <button id="startGameBtn" class="primary big" disabled>Empezar partida</button>
       </div>
-      <div class="host-tools">
-        <button id="hostNextBtn">Siguiente turno</button>
-        <button id="hostMoveBtn">Mover +1</button>
-        <button id="hostPrizeBtn">Dar premio</button>
-      </div>
-      <div id="toast" class="toast"></div>
-      <div class="version">v0.1.1</div>
-    </section>
+      <div id="hostGameInfo" class="hidden"></div>
+    </div>
 
-    <section id="playerView" class="view player-view">
-      <header class="phone-header">
-        <span class="brand-mini">🐾 ANGU</span>
-        <span id="phoneRoomCode" class="room-chip small-chip">----</span>
-        <span id="phoneConn" class="phone-conn">●</span>
-      </header>
-      <main id="phoneStage" class="phone-stage"></main>
-      <footer class="phone-footer"><span id="identityText"></span><span>v0.1.1</span></footer>
-    </section>
-  </div>
+    <div class="host-tools">
+      <button id="hostNextBtn">Siguiente turno</button>
+      <button id="hostMoveBtn">Mover +1</button>
+      <button id="hostPrizeBtn">Dar premio</button>
+    </div>
+    <div id="toast" class="toast"></div>
+    <div class="version">v0.2.0</div>
+  </section>
 
-  <script type="module" src="./app.js"></script>
+  <section id="playerView" class="view player-view">
+    <header class="phone-header">
+      <span class="brand-mini">🐾 ANGU</span>
+      <span id="phoneRoomCode" class="room-chip small-chip">----</span>
+      <span id="phoneConn" class="phone-conn">●</span>
+    </header>
+    <main id="phoneStage" class="phone-stage"></main>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.2.0</span></footer>
+  </section>
+</div>
+<script type="module" src="./app.js"></script>
 </body>
 </html>
