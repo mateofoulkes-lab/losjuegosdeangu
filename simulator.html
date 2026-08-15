@@ -20,7 +20,7 @@
 </head>
 <body>
   <div class="top">
-    <h1>🐾 Simulador de 4 celulares</h1>
+    <h1>🐾 Simulador de 4 celulares · v0.3.2</h1>
     <span class="hint">Creá la sala en la otra ventana, copiá el código acá.</span>
     <input id="code" maxlength="4" placeholder="ABCD" autocomplete="off">
     <button id="connect">Conectar los 4</button>
@@ -34,7 +34,7 @@ function mount(){
   grid.innerHTML='';
   for(let i=1;i<=4;i++){
     const wrap=document.createElement('div');wrap.className='phone';
-    wrap.innerHTML=`<div class="label">CELULAR ${i}</div><iframe allow="autoplay; fullscreen" src="./simplayer.html?room=${encodeURIComponent(c)}&slot=${i}"></iframe>`;
+    wrap.innerHTML=`<div class="label">CELULAR ${i}</div><iframe allow="autoplay; fullscreen" src="./simplayer.html?v=032&room=${encodeURIComponent(c)}&slot=${i}"></iframe>`;
     grid.appendChild(wrap);
   }
   history.replaceState(null,'',`?room=${c}`);
