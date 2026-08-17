@@ -4,6 +4,7 @@ const CORRECTIONS = new Map([
   ['111:1', {q:'¿A cuántos grados hierve aproximadamente el agua al nivel del mar?', answer:'A CIEN GRADOS (aproximadamente, a presión atmosférica normal)'}],
   ['114:3', {q:'Según el relato bíblico del Génesis, ¿las aves aparecieron antes que el hombre?', answer:'SÍ'}],
   ['125:2', {q:'¿Alrededor de qué temperatura puede empezar a enturbiarse o solidificarse el aceite de oliva?', opts:['CERCA DE CERO GRADOS','A diez grados bajo cero','A cien grados bajo cero'], a:0}],
+  ['126:3', {opts:['De raíces','De carroña','DE EXCREMENTOS O HECES'], a:2}],
   ['144:2', {q:'¿En qué país funcionó la primera central nuclear conectada a una red eléctrica?', opts:['En Estados Unidos','EN LA UNIÓN SOVIÉTICA','En Japón'], a:1}],
   ['165:2', {kind:'free', q:'¿Qué sustancia desencadena la celiaquía en las personas predispuestas?', answer:'EL GLUTEN (presente principalmente en trigo, cebada y centeno)'}],
   ['265:3', {kind:'free', q:'¿Qué compuesto explosivo es un componente principal de la gelignita o gelatina explosiva?', answer:'NITROGLICERINA'}],
