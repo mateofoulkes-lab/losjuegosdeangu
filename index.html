@@ -11,10 +11,12 @@
   {
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+      "https://esm.sh/trystero@0.25.3": "./star-room.js"
     }
   }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
 <div id="app">
@@ -32,7 +34,7 @@
             <button id="joinRoomBtn">Entrar con celular</button>
           </div>
         </div>
-        <p class="small muted">La pantalla que crea la sala será el tablero/admin. Los celulares se conectan por WebRTC P2P mediante Trystero.</p>
+        <p class="small muted">La pantalla que crea la sala será el tablero/admin. Cada celular se conecta directamente a ella por WebRTC; si están en el mismo Wi‑Fi, el tráfico del juego puede ir por la red local.</p>
       </div>
     </div>
   </section>
@@ -53,7 +55,7 @@
       <div id="hostLobby">
         <img src="./FOTO.jpg" alt="Angu" class="lobby-photo" />
         <h2>Que empiece la diversión</h2>
-        <p>Que todos entren con el código de sala.</p>
+        <p>Que todos escaneen el QR o entren con el código de sala.</p>
         <div id="qrBox" class="qr-box"></div>
         <button id="startGameBtn" class="primary big" disabled>Empezar partida</button>
       </div>
@@ -66,7 +68,7 @@
       <button id="hostPrizeBtn">Dar premio</button>
     </div>
     <div id="toast" class="toast"></div>
-    <div class="version">v0.4.0</div>
+    <div class="version">v0.5.0</div>
   </section>
 
   <section id="playerView" class="view player-view">
@@ -76,11 +78,22 @@
       <span id="phoneConn" class="phone-conn">●</span>
     </header>
     <main id="phoneStage" class="phone-stage"></main>
-    <footer class="phone-footer"><span id="identityText"></span><span>v0.4.0</span></footer>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.5.0</span></footer>
   </section>
 </div>
 <script type="module" src="./dice-debug.js"></script>
 <script type="module" src="./app.js"></script>
 <script src="./action-visibility.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const p = new URLSearchParams(location.search);
+    if (p.get('join') !== '1') return;
+    const room = (p.get('room') || '').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 4);
+    if (room.length !== 4) return;
+    const input = document.querySelector('#roomCodeInput');
+    if (input) input.value = room;
+    setTimeout(() => document.querySelector('#joinRoomBtn')?.click(), 0);
+  });
+</script>
 </body>
 </html>
