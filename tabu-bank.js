@@ -1,0 +1,10 @@
+import { TABU_1 } from './tabu-1.js';
+import { TABU_2 } from './tabu-2.js';
+import { TABU_3 } from './tabu-3.js';
+import { TABU_4 } from './tabu-4.js';
+import { TABU_5 } from './tabu-5.js';
+import { TABU_6 } from './tabu-6.js';
+import { TABU_7 } from './tabu-7.js';
+import { TABU_8 } from './tabu-8.js';
+export const TABU_CARDS=[...TABU_1,...TABU_2,...TABU_3,...TABU_4,...TABU_5,...TABU_6,...TABU_7,...TABU_8];
+if(TABU_CARDS.length!==976)console.warn(`[Angu] Se esperaban 976 tarjetas de Tabú y se cargaron ${TABU_CARDS.length}.`);
