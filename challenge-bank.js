@@ -1,5 +1,8 @@
+import { CARRERA_DE_MENTES } from './carrera-de-mentes-bank.js';
+
 export const CHALLENGE_BANK={
   mente:[
+    ...CARRERA_DE_MENTES,
     {kind:'trivia',q:'¿Cuál es el planeta más grande del sistema solar?',opts:['Marte','Júpiter','Saturno','Venus'],a:1},
     {kind:'trivia',q:'¿Cuántos lados tiene un dodecágono?',opts:['10','11','12','14'],a:2},
     {kind:'trivia',q:'¿Qué animal tiene tres corazones?',opts:['Pulpo','Tiburón','Delfín','Pingüino'],a:0},
