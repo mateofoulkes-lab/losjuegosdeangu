@@ -34,6 +34,7 @@ Party game web para jugar con una TV/PC como tablero central y celulares como co
 
 Cada turno puede contener como máximo **tres tiradas de dado**.
 
+- Al caer en una casilla de Mente, **el jugador elige en su celular, antes de ver la pregunta, si quiere una pregunta de ⭐, ⭐⭐ o ⭐⭐⭐**.
 - Al tirar el dado, el jugador avanza y responde la pregunta correspondiente.
 - Si responde **incorrectamente**, el turno termina inmediatamente.
 - Si responde **correctamente**, conserva el turno y vuelve a tirar el dado, siempre que todavía no haya realizado tres tiradas en ese turno.
