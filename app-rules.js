@@ -69,8 +69,6 @@ patch(
  const isThreeStar=isCarrera&&Number(c?.difficulty)===3;
  const canRollAgain=isCarrera&&game.turnRolls<3;
  if(ok&&p){
-   // Carrera de Mentes: only a 3-star correct answer awards Mente.
-   // Other categories keep their existing reward rule.
    if(!isCarrera||isThreeStar)awardPrize(p,c.category,false);
    if(game.winner){sync();return}
    const opts=stealOptionsFor(p);
@@ -114,6 +112,40 @@ patch(
   "if(game.phase==='turn'&&turn){stage.innerHTML='<div class=\"phone-card\"><span class=\"turn-badge\">TU TURNO</span><h2>¡Tirá el dado!</h2><button id=\"diceBtn\" class=\"dice-button\">🎲</button></div>';",
   "if(game.phase==='turn'&&turn){stage.innerHTML=`<div class=\"phone-card\"><span class=\"turn-badge\">TU TURNO · ${Math.min(game.turnRolls+1,3)}/3</span><h2>¡Tirá el dado!</h2><button id=\"diceBtn\" class=\"dice-button\">🎲</button></div>`;",
   'phone roll counter'
+);
+
+// Carrera de Mentes: before revealing a question, the active player chooses 1, 2 or 3 stars.
+patch(
+`function startCategory(p,cat){
+ const item=pickChallenge(cat,game.lastChallengeKey);game.lastChallengeKey=item.key;const r=readerFor(p);
+ game.challenge={...item,category:cat,answerer:item.kind==='buzzer'?null:p.token,reader:r.token,selected:null,freeAnswer:''};
+ game.buzzerWinner=null;game.phase='challenge';sync()
+}`,
+`function startCategory(p,cat,difficulty=null){
+ if(cat==='mente'&&!difficulty){game.challenge=null;game.buzzerWinner=null;game.phase='difficulty-choice';game.message='Elegí dificultad: ⭐, ⭐⭐ o ⭐⭐⭐';sync();return}
+ const item=pickChallenge(cat,game.lastChallengeKey,difficulty);game.lastChallengeKey=item.key;const r=readerFor(p);
+ game.challenge={...item,category:cat,answerer:item.kind==='buzzer'?null:p.token,reader:r.token,selected:null,freeAnswer:''};
+ game.buzzerWinner=null;game.phase='challenge';game.message='';sync()
+}`,
+  'difficulty selection before Mente question'
+);
+
+patch(
+  "const active=current();\n if(d.type==='roll'&&game.phase==='turn'&&active?.token===p.token&&game.turnRolls<3){const n=1+Math.floor(Math.random()*6);game.turnRolls++;game.roll=n;game.phase='moving';sync();rollDice3D(n);setTimeout(()=>moveBy(p,n),1100);return}",
+  "const active=current();\n if(d.type==='chooseDifficulty'&&game.phase==='difficulty-choice'&&active?.token===p.token&&[1,2,3].includes(Number(d.difficulty))){startCategory(p,'mente',Number(d.difficulty));return}\n if(d.type==='roll'&&game.phase==='turn'&&active?.token===p.token&&game.turnRolls<3){const n=1+Math.floor(Math.random()*6);game.turnRolls++;game.roll=n;game.phase='moving';sync();rollDice3D(n);setTimeout(()=>moveBy(p,n),1100);return}",
+  'difficulty choice intent'
+);
+
+patch(
+  "if(game.phase==='turn'&&active?.token===p.token)return{text:'EN TURNO · TIRA',cls:'active'};",
+  "if(game.phase==='difficulty-choice'&&active?.token===p.token)return{text:'ELEGÍ ⭐ DIFICULTAD',cls:'active'};if(game.phase==='turn'&&active?.token===p.token)return{text:'EN TURNO · TIRA',cls:'active'};",
+  'difficulty player status'
+);
+
+patch(
+  "if(game.phase==='turn'&&turn){stage.innerHTML=`<div class=\"phone-card\"><span class=\"turn-badge\">TU TURNO · ${Math.min(game.turnRolls+1,3)}/3</span><h2>¡Tirá el dado!</h2><button id=\"diceBtn\" class=\"dice-button\">🎲</button></div>`;$('#diceBtn').onclick=()=>{navigator.vibrate?.(60);sendIntent('roll');$('#diceBtn').disabled=true};return}\n if(c){",
+  "if(game.phase==='turn'&&turn){stage.innerHTML=`<div class=\"phone-card\"><span class=\"turn-badge\">TU TURNO · ${Math.min(game.turnRolls+1,3)}/3</span><h2>¡Tirá el dado!</h2><button id=\"diceBtn\" class=\"dice-button\">🎲</button></div>`;$('#diceBtn').onclick=()=>{navigator.vibrate?.(60);sendIntent('roll');$('#diceBtn').disabled=true};return}\n if(game.phase==='difficulty-choice'){if(turn){stage.innerHTML='<div class=\"phone-card\"><span class=\"turn-badge\">🧠 MENTE</span><h2>Elegí la dificultad</h2><p>⭐ y ⭐⭐ te permiten seguir jugando si acertás. ⭐⭐⭐ además puede darte el premio de Mente.</p><div class=\"answer-grid\"><button class=\"answer-btn diff-btn\" data-d=\"1\">⭐</button><button class=\"answer-btn diff-btn\" data-d=\"2\">⭐⭐</button><button class=\"answer-btn diff-btn\" data-d=\"3\">⭐⭐⭐</button></div></div>';stage.querySelectorAll('.diff-btn').forEach(b=>b.onclick=()=>{sendIntent('chooseDifficulty',{difficulty:Number(b.dataset.d)});stage.querySelectorAll('.diff-btn').forEach(x=>x.disabled=true)});return}stage.innerHTML='<div class=\"phone-card\"><div class=\"wait-icon\">🧠</div><h2>Eligiendo dificultad…</h2><p>El jugador en turno decide entre ⭐, ⭐⭐ y ⭐⭐⭐.</p></div>';return}\n if(c){",
+  'difficulty picker on phone'
 );
 
 const blob = new Blob([source], { type: 'text/javascript' });
