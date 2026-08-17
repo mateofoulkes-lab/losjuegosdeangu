@@ -75,16 +75,22 @@ export const CHALLENGE_BANK={
 
 const usedTabuIndexes=new Set();
 
-export function pickChallenge(category,lastKey=''){
+export function pickChallenge(category,lastKey='',difficulty=null){
   const pool=CHALLENGE_BANK[category]||CHALLENGE_BANK.mente;
   let candidates=pool.map((item,index)=>({item,index})).filter(x=>`${category}:${x.index}`!==lastKey);
+  if(category==='mente'&&[1,2,3].includes(Number(difficulty))){
+    candidates=candidates.filter(x=>x.item.source==='Carrera de Mentes'&&Number(x.item.difficulty)===Number(difficulty));
+  }
   if(category==='palabra'){
     let freshTabu=candidates.filter(x=>x.item.kind==='taboo'&&!usedTabuIndexes.has(x.index));
     if(!freshTabu.length){usedTabuIndexes.clear();freshTabu=candidates.filter(x=>x.item.kind==='taboo')}
     const other=candidates.filter(x=>x.item.kind!=='taboo');
     candidates=[...freshTabu,...other];
   }
-  const picked=candidates[Math.floor(Math.random()*candidates.length)]||{item:pool[0],index:0};
+  const fallback=category==='mente'&&[1,2,3].includes(Number(difficulty))
+    ? pool.map((item,index)=>({item,index})).find(x=>x.item.source==='Carrera de Mentes'&&Number(x.item.difficulty)===Number(difficulty))
+    : {item:pool[0],index:0};
+  const picked=candidates[Math.floor(Math.random()*candidates.length)]||fallback||{item:pool[0],index:0};
   if(category==='palabra'&&picked.item.kind==='taboo')usedTabuIndexes.add(picked.index);
   return {...picked.item,key:`${category}:${picked.index}`};
 }
