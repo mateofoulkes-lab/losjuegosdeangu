@@ -1,4 +1,5 @@
 import { CARRERA_DE_MENTES } from './carrera-de-mentes-bank.js';
+import { TABU_CARDS } from './tabu-bank.js';
 
 export const CHALLENGE_BANK={
   mente:[
@@ -15,11 +16,7 @@ export const CHALLENGE_BANK={
     {kind:'free',title:'LÓGICA',q:'Tenés dos monedas que suman 30. Una no es de 10. ¿Cuáles son?',answer:'Una de 20 y una de 10; “una” no es de 10.'}
   ],
   palabra:[
-    {kind:'taboo',title:'PALABRA PROHIBIDA',secret:'HELADO',forbidden:['frío','postre','crema','cono']},
-    {kind:'taboo',title:'PALABRA PROHIBIDA',secret:'AVIÓN',forbidden:['volar','aeropuerto','alas','piloto']},
-    {kind:'taboo',title:'PALABRA PROHIBIDA',secret:'PERRO',forbidden:['animal','ladrar','mascota','cola']},
-    {kind:'taboo',title:'PALABRA PROHIBIDA',secret:'NETFLIX',forbidden:['serie','película','streaming','tele']},
-    {kind:'taboo',title:'PALABRA PROHIBIDA',secret:'FÚTBOL',forbidden:['pelota','gol','cancha','jugador']},
+    ...TABU_CARDS.map(card=>({kind:'taboo',title:'PALABRA PROHIBIDA',source:'Recopilatorio Tabú',...card})),
     {kind:'free',title:'CADENA',q:'Decí una palabra que empiece con las últimas dos letras de “CAMA”. Después el grupo continúa tres palabras más.',answer:'Cadena válida sin repetir'},
     {kind:'free',title:'DEFINICIÓN HORRIBLE',q:'Definí “microondas” sin decir para qué sirve. Si el grupo adivina, ganás.',answer:'El grupo valida'},
     {kind:'free',title:'TRES EN CINCO',q:'Nombrá tres cosas que entren en un bolsillo en menos de 5 segundos.',answer:'Tres respuestas válidas'},
@@ -76,10 +73,18 @@ export const CHALLENGE_BANK={
   ]
 };
 
+const usedTabuIndexes=new Set();
+
 export function pickChallenge(category,lastKey=''){
   const pool=CHALLENGE_BANK[category]||CHALLENGE_BANK.mente;
-  const candidates=pool.filter((x,i)=>`${category}:${i}`!==lastKey);
-  const item=candidates[Math.floor(Math.random()*candidates.length)]||pool[0];
-  const index=pool.indexOf(item);
-  return {...item,key:`${category}:${index}`};
+  let candidates=pool.map((item,index)=>({item,index})).filter(x=>`${category}:${x.index}`!==lastKey);
+  if(category==='palabra'){
+    let freshTabu=candidates.filter(x=>x.item.kind==='taboo'&&!usedTabuIndexes.has(x.index));
+    if(!freshTabu.length){usedTabuIndexes.clear();freshTabu=candidates.filter(x=>x.item.kind==='taboo')}
+    const other=candidates.filter(x=>x.item.kind!=='taboo');
+    candidates=[...freshTabu,...other];
+  }
+  const picked=candidates[Math.floor(Math.random()*candidates.length)]||{item:pool[0],index:0};
+  if(category==='palabra'&&picked.item.kind==='taboo')usedTabuIndexes.add(picked.index);
+  return {...picked.item,key:`${category}:${picked.index}`};
 }
