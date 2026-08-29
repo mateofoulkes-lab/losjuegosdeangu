@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#14111d">
+  <title>LoDijo · Los Juegos de Angu</title>
+  <link rel="stylesheet" href="./lodijo.css">
+</head>
+<body>
+  <main id="homeView" class="view active">
+    <section class="home-card">
+      <div class="brand-mark">💬</div>
+      <p class="eyebrow">LOS JUEGOS DE ANGU PRESENTA</p>
+      <h1>LoDijo</h1>
+      <p class="tagline">Una imagen. Una pista. ¿Quién entendió lo que quisiste decir?</p>
+      <div class="home-actions">
+        <button id="createRoomBtn" class="primary big">Crear sala en esta pantalla</button>
+        <div class="join-divider"><span>o entrá a una sala</span></div>
+        <div class="join-row">
+          <input id="roomCodeInput" class="code-input" maxlength="4" autocomplete="off" placeholder="ABCD" aria-label="Código de sala">
+          <button id="manualJoinBtn" class="secondary">Unirme</button>
+        </div>
+      </div>
+      <p class="tiny">TV/PC = anfitrión · celulares = jugadores</p>
+    </section>
+  </main>
+
+  <main id="hostView" class="view host-view">
+    <header class="host-header">
+      <div>
+        <p class="eyebrow">LODIJO</p>
+        <h2 id="hostPhaseTitle">Sala de espera</h2>
+      </div>
+      <div class="room-pill">SALA <strong id="hostRoomCode">----</strong></div>
+    </header>
+
+    <section id="hostLobby" class="host-lobby">
+      <div class="join-panel">
+        <div id="qrBox" class="qr-box"></div>
+        <div class="join-copy">
+          <p>Escaneá el QR o entrá a esta misma página.</p>
+          <div id="hostCodeHuge" class="huge-code">----</div>
+          <p id="hostStatus" class="status-line">Preparando la sala…</p>
+          <p id="deckStatus" class="deck-status">Detectando cartas disponibles…</p>
+        </div>
+      </div>
+      <div class="lobby-right">
+        <h3>Jugadores</h3>
+        <div id="hostPlayers" class="players-list"></div>
+        <button id="startGameBtn" class="primary big" disabled>Esperando al menos 3 jugadores…</button>
+      </div>
+    </section>
+
+    <section id="hostGame" class="host-game hidden">
+      <aside class="scoreboard">
+        <h3>Puntajes</h3>
+        <div id="scoreList"></div>
+        <div class="round-badge">RONDA <strong id="roundNumber">1</strong></div>
+      </aside>
+      <section class="game-stage">
+        <div id="hostPrompt" class="host-prompt"></div>
+        <div id="hostCards" class="host-cards"></div>
+        <div id="hostRoundResult" class="round-result hidden"></div>
+        <div id="hostControls" class="host-controls"></div>
+      </section>
+    </section>
+  </main>
+
+  <main id="playerView" class="view phone-view">
+    <header class="phone-header">
+      <div><span class="mini-logo">💬</span> <strong>LoDijo</strong></div>
+      <span id="phoneRoomCode" class="phone-room">----</span>
+    </header>
+
+    <section id="phoneJoin" class="phone-card join-card">
+      <p class="eyebrow">ENTRAR A LA SALA</p>
+      <h2 id="phoneJoinRoom">----</h2>
+      <label for="playerName">Tu nombre</label>
+      <input id="playerName" class="name-input" maxlength="18" autocomplete="nickname" placeholder="Nombre">
+      <button id="enterRoomBtn" class="primary big">Entrar</button>
+      <p id="phoneJoinStatus" class="tiny"></p>
+    </section>
+
+    <section id="phoneGame" class="phone-game hidden">
+      <div id="phoneConnection" class="connection-dot" title="Conexión"></div>
+      <div id="phoneStage"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script type="module" src="./lodijo.js"></script>
+</body>
+</html>
