@@ -1,5 +1,6 @@
 import { CARRERA_DE_MENTES } from './carrera-de-mentes-bank.js';
 import { TABU_CARDS } from './tabu-bank.js';
+import { MIMIC_CARDS, PICTIONARY_CARDS } from './draw-mime-bank.js';
 
 export const CHALLENGE_BANK={
   mente:[
@@ -23,30 +24,9 @@ export const CHALLENGE_BANK={
     {kind:'free',title:'RIMA',q:'Improvisá una frase que rime con “Angu manda en esta casa”.',answer:'El grupo decide'},
     {kind:'trivia',q:'¿Cuál de estas palabras está escrita correctamente?',opts:['Excepción','Exepción','Excepsión','Execepción'],a:0}
   ],
-  accion:[
-    {kind:'buzzer',q:'Decí una capital europea. El primero en tocar el buzzer responde.',answer:'Cualquier capital europea válida'},
-    {kind:'buzzer',q:'¿Cuánto es 7 × 8?',answer:'56'},
-    {kind:'buzzer',q:'Nombrá un animal que empiece con R.',answer:'Cualquier animal válido'},
-    {kind:'buzzer',q:'¿Qué mes tiene menos días?',answer:'Febrero'},
-    {kind:'perform',title:'MÍMICA',q:'Hacé una mímica de “alguien intentando abrir un paraguas con mucho viento”. No hables.'},
-    {kind:'perform',title:'SONIDO',q:'Imitá durante 8 segundos una máquina que está por romperse. No podés usar palabras.'},
-    {kind:'perform',title:'ESTATUA',q:'Tenés 5 segundos para convertirte en una estatua de superhéroe ridículo. Mantenela 8 segundos.'},
-    {kind:'perform',title:'DOBLAJE',q:'Decí “no pasa nada” como si fueras villano, locutor deportivo y criatura diminuta.'},
-    {kind:'perform',title:'REFLEJOS',q:'El jurado va a decir tres veces “YA”. Aplaudí sólo en el segundo “YA”.'},
-    {kind:'perform',title:'EQUILIBRIO',q:'Mantené un pie en el aire durante 10 segundos mientras contás de 10 a 1.'}
-  ],
-  creatividad:[
-    {kind:'social',title:'INVENTÁ',q:'Inventá el peor nombre posible para un superhéroe y explicá su poder.'},
-    {kind:'social',title:'PUBLICIDAD',q:'Vendé una cuchara como si fuera un producto de lujo de 10.000 dólares.'},
-    {kind:'social',title:'PELÍCULA',q:'Inventá el título y argumento de una película protagonizada por una papa detective.'},
-    {kind:'social',title:'EXCUSA',q:'Inventá una excusa absurda pero creíble para llegar tres horas tarde a una boda.'},
-    {kind:'social',title:'NUEVO DEPORTE',q:'Creá un deporte que se juegue con una almohada y una escoba. Explicá dos reglas.'},
-    {kind:'social',title:'MENÚ',q:'Inventá un plato gourmet usando sólo ingredientes que encontrarías en una estación de servicio.'},
-    {kind:'social',title:'TÍTULO',q:'Poné título a la autobiografía de la persona a tu derecha.'},
-    {kind:'social',title:'MASCOTA',q:'Inventá una mascota para un banco: nombre, animal y eslogan.'},
-    {kind:'social',title:'NOTICIA',q:'Improvisá un titular de último momento sobre algo completamente normal que pasó hoy.'},
-    {kind:'social',title:'INVENTO',q:'Inventá un objeto inútil que igual compraríamos todos.'}
-  ],
+  // Los dos megabancos grandes nuevos.
+  accion:MIMIC_CARDS,
+  creatividad:PICTIONARY_CARDS,
   mentiras:[
     {kind:'social',title:'DOS VERDADES',q:'Decí dos cosas verdaderas y una mentira sobre vos. El grupo tiene que detectar la mentira.'},
     {kind:'social',title:'COARTADA',q:'Inventá una coartada de 20 segundos para explicar por qué había una cabra en tu cocina.'},
@@ -74,6 +54,7 @@ export const CHALLENGE_BANK={
 };
 
 const usedTabuIndexes=new Set();
+const usedPartyIndexes={accion:new Set(),creatividad:new Set()};
 
 export function pickChallenge(category,lastKey='',difficulty=null){
   const pool=CHALLENGE_BANK[category]||CHALLENGE_BANK.mente;
@@ -87,10 +68,17 @@ export function pickChallenge(category,lastKey='',difficulty=null){
     const other=candidates.filter(x=>x.item.kind!=='taboo');
     candidates=[...freshTabu,...other];
   }
+  if(category==='accion'||category==='creatividad'){
+    const used=usedPartyIndexes[category];
+    let fresh=candidates.filter(x=>!used.has(x.index));
+    if(!fresh.length){used.clear();fresh=candidates}
+    candidates=fresh;
+  }
   const fallback=category==='mente'&&[1,2,3].includes(Number(difficulty))
     ? pool.map((item,index)=>({item,index})).find(x=>x.item.source==='Carrera de Mentes'&&Number(x.item.difficulty)===Number(difficulty))
     : {item:pool[0],index:0};
   const picked=candidates[Math.floor(Math.random()*candidates.length)]||fallback||{item:pool[0],index:0};
   if(category==='palabra'&&picked.item.kind==='taboo')usedTabuIndexes.add(picked.index);
+  if(category==='accion'||category==='creatividad')usedPartyIndexes[category].add(picked.index);
   return {...picked.item,key:`${category}:${picked.index}`};
 }
