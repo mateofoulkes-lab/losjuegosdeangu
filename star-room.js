@@ -1,11 +1,18 @@
-import Peer from 'https://esm.sh/peerjs@1.5.5?bundle';
-
 // Trystero-compatible transport shim used by app.js.
 // Topology is intentionally HOST <-> PHONE only: phones never connect to each other.
+// PeerJS is loaded lazily so a CDN/network problem cannot prevent the game UI from booting.
 export let selfId = '';
 
 const reconnectDelay = 1200;
 const rooms = new Set();
+let peerCtorPromise = null;
+
+function loadPeerCtor() {
+  if (!peerCtorPromise) {
+    peerCtorPromise = import('https://esm.sh/peerjs@1.5.5?bundle').then(m => m.default || m.Peer || m);
+  }
+  return peerCtorPromise;
+}
 
 function slug(value) {
   return String(value || '')
@@ -17,8 +24,6 @@ function slug(value) {
 }
 
 function extraIceServers() {
-  // Optional TURN hook. A future TURN service can be injected without touching the game:
-  // window.ANGU_TURN_SERVERS = [{urls:'turn:...', username:'...', credential:'...'}]
   const configured = Array.isArray(window.ANGU_TURN_SERVERS) ? window.ANGU_TURN_SERVERS : [];
   return configured;
 }
@@ -105,8 +110,6 @@ export function joinRoom(config = {}, roomId = '', opts = {}) {
               }
             } else {
               if (!hostConnection?.open) return Promise.reject(new Error('host-not-connected'));
-              // In star topology every player message goes to the host. A target other than
-              // the host is intentionally ignored because phones never talk phone-to-phone.
               hostConnection.send(packet);
             }
             return Promise.resolve();
@@ -128,6 +131,9 @@ export function joinRoom(config = {}, roomId = '', opts = {}) {
     }
   };
 
+  rooms.add(room);
+  if (isHost) renderInvite(roomId);
+
   function deliver(conn, packet) {
     if (!packet || packet.__angu !== 1 || !packet.action) return;
     const handler = actionHandlers.get(packet.action);
@@ -138,13 +144,11 @@ export function joinRoom(config = {}, roomId = '', opts = {}) {
     if (!conn) return;
     conn.on('data', data => deliver(conn, data));
     conn.on('error', error => console.warn('[Angu WebRTC] data connection error', error));
-
     conn.on('open', () => {
       if (isHost) connections.set(conn.peer, conn);
       else hostConnection = conn;
       room.onPeerJoin?.(conn.peer);
     });
-
     conn.on('close', () => {
       if (isHost) connections.delete(conn.peer);
       else if (hostConnection === conn) hostConnection = null;
@@ -177,34 +181,35 @@ export function joinRoom(config = {}, roomId = '', opts = {}) {
     }, reconnectDelay);
   }
 
-  if (isHost) renderInvite(roomId);
-
-  peer = isHost ? new Peer(hostId, peerOptions()) : new Peer(undefined, peerOptions());
-  rooms.add(room);
-
-  peer.on('open', id => {
-    selfId = id;
-    if (!isHost) connectToHost();
-  });
-
-  if (isHost) {
-    peer.on('connection', conn => attach(conn));
-  }
-
-  peer.on('disconnected', () => {
+  loadPeerCtor().then(Peer => {
     if (destroyed) return;
-    try { peer.reconnect(); } catch {}
-  });
+    peer = isHost ? new Peer(hostId, peerOptions()) : new Peer(undefined, peerOptions());
 
-  peer.on('error', error => {
-    console.warn('[Angu WebRTC] peer error', error?.type || error, error);
-    if (error?.type === 'unavailable-id' && isHost) {
-      opts?.onJoinError?.({ error: new Error('Ya existe una pantalla host para esta sala.') });
-    } else if (!isHost) {
-      scheduleReconnect();
-    } else {
-      opts?.onJoinError?.({ error });
-    }
+    peer.on('open', id => {
+      selfId = id;
+      if (!isHost) connectToHost();
+    });
+
+    if (isHost) peer.on('connection', conn => attach(conn));
+
+    peer.on('disconnected', () => {
+      if (destroyed) return;
+      try { peer.reconnect(); } catch {}
+    });
+
+    peer.on('error', error => {
+      console.warn('[Angu WebRTC] peer error', error?.type || error, error);
+      if (error?.type === 'unavailable-id' && isHost) {
+        opts?.onJoinError?.({ error: new Error('Ya existe una pantalla host para esta sala.') });
+      } else if (!isHost) {
+        scheduleReconnect();
+      } else {
+        opts?.onJoinError?.({ error });
+      }
+    });
+  }).catch(error => {
+    console.error('[Angu WebRTC] no se pudo cargar PeerJS', error);
+    opts?.onJoinError?.({ error: new Error('No se pudo cargar el módulo de red PeerJS.') });
   });
 
   return room;
