@@ -68,7 +68,7 @@
       <button id="hostPrizeBtn">Dar premio</button>
     </div>
     <div id="toast" class="toast"></div>
-    <div class="version">v0.6.0</div>
+    <div class="version">v0.6.1</div>
   </section>
 
   <section id="playerView" class="view player-view">
@@ -78,11 +78,22 @@
       <span id="phoneConn" class="phone-conn">●</span>
     </header>
     <main id="phoneStage" class="phone-stage"></main>
-    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.0</span></footer>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.1</span></footer>
   </section>
 </div>
 <script type="module" src="./dice-debug.js"></script>
-<script type="module" src="./app-rules.js"></script>
+<script type="module">
+  import('./app-rules.js').catch(async error => {
+    console.error('[Angu] No se pudo aplicar app-rules.js; cargando app.js base.', error);
+    try {
+      await import('./app.js');
+    } catch (fallbackError) {
+      console.error('[Angu] Tampoco se pudo cargar app.js base.', fallbackError);
+      const status = document.querySelector('#hostStatus');
+      if (status) status.textContent = 'error al cargar juego';
+    }
+  });
+</script>
 <script src="./action-visibility.js"></script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
