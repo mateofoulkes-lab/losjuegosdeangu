@@ -81,8 +81,8 @@ patch(
    }
    if(isCarrera){
      const prizeText=isThreeStar?' · 🧠 premio de MENTE ganado':'';
-     if(canRollAgain){continueTurn(`¡Correcta!${prizeText} · tirás de nuevo`);return}
-     finishResult(`¡Correcta!${prizeText} · tercera tirada completada`);return
+     if(canRollAgain){continueTurn(\`¡Correcta!\${prizeText} · tirás de nuevo\`);return}
+     finishResult(\`¡Correcta!\${prizeText} · tercera tirada completada\`);return
    }
  }
  finishResult(ok?'¡Superado! 🎉':'Incorrecta · termina el turno 😅')
