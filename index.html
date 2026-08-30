@@ -12,7 +12,7 @@
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
-      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.4"
+      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.5"
     }
   }
   </script>
@@ -35,7 +35,7 @@
           </div>
         </div>
         <p class="small muted">La pantalla que crea la sala será el tablero/admin. Cada celular se conecta directamente a ella por WebRTC; si están en el mismo Wi‑Fi, el tráfico del juego puede ir por la red local.</p>
-        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-064 · comprobando módulos…</p>
+        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-065 · comprobando módulos…</p>
       </div>
     </div>
   </section>
@@ -65,7 +65,7 @@
       <button id="hostPrizeBtn">Dar premio</button>
     </div>
     <div id="toast" class="toast"></div>
-    <div class="version">v0.6.4</div>
+    <div class="version">v0.6.5</div>
   </section>
 
   <section id="playerView" class="view player-view">
@@ -75,18 +75,18 @@
       <span id="phoneConn" class="phone-conn">●</span>
     </header>
     <main id="phoneStage" class="phone-stage"></main>
-    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.4</span></footer>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.5</span></footer>
   </section>
 </div>
-<script type="module" src="./dice-debug.js?v=0.6.4"></script>
+<script type="module" src="./dice-debug.js?v=0.6.5"></script>
 <script type="module">
   const boot = document.querySelector('#bootStatus');
-  const setBoot = text => { if (boot) boot.textContent = `BUILD ANGU-064 · ${text}`; };
+  const setBoot = text => { if (boot) boot.textContent = `BUILD ANGU-065 · ${text}`; };
   const fail = (stage, error) => {
     console.error(`[Angu boot:${stage}]`, error);
     const msg = String(error?.message || error || 'error desconocido').slice(0, 180);
     if (boot) {
-      boot.textContent = `BUILD ANGU-064 · ERROR [${stage}]: ${msg}`;
+      boot.textContent = `BUILD ANGU-065 · ERROR [${stage}]: ${msg}`;
       boot.style.color = '#ffb4b4';
     }
     throw error;
@@ -100,17 +100,20 @@
   try {
     await test('THREE', 'Three.js', () => import('three'));
     await test('GLTF', 'GLTFLoader', () => import('three/addons/loaders/GLTFLoader.js'));
-    await test('NETWORK', 'módulo de red', () => import('./star-room.js?v=0.6.4'));
-    await test('BANK', 'bancos de cartas', () => import('./challenge-bank.js?v=0.6.4'));
+    await test('NETWORK', 'módulo de red', () => import('./star-room.js?v=0.6.5'));
+    await test('CARRERA', 'Carrera de Mentes', () => import('./carrera-de-mentes-bank.js?v=0.6.5'));
+    await test('TABU', 'Tabú', () => import('./tabu-bank.js?v=0.6.5'));
+    await test('DRAW_MIME', 'Dibujo y mímica', () => import('./draw-mime-bank.js?v=0.6.5'));
+    await test('BANK', 'banco combinado', () => import('./challenge-bank.js?v=0.6.5'));
     setBoot('módulos OK · cargando juego…');
 
     try {
-      await import('./app-rules.js?v=0.6.4');
+      await import('./app-rules.js?v=0.6.5');
       setBoot('juego cargado ✓');
     } catch (rulesError) {
       console.error('[Angu] app-rules.js falló; probando app.js base.', rulesError);
       try {
-        await import('./app.js?v=0.6.4');
+        await import('./app.js?v=0.6.5');
         setBoot('juego base cargado ✓ · reglas extra fallaron');
       } catch (appError) {
         fail('APP', appError);
@@ -118,7 +121,7 @@
     }
   } catch {}
 </script>
-<script src="./action-visibility.js?v=0.6.4"></script>
+<script src="./action-visibility.js?v=0.6.5"></script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     const p = new URLSearchParams(location.search);
