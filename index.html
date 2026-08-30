@@ -12,7 +12,7 @@
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
-      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.6"
+      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.7"
     }
   }
   </script>
@@ -35,7 +35,7 @@
           </div>
         </div>
         <p class="small muted">La pantalla que crea la sala será el tablero/admin. Cada celular se conecta directamente a ella por WebRTC; si están en el mismo Wi‑Fi, el tráfico del juego puede ir por la red local.</p>
-        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-066 · comprobando módulos…</p>
+        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-067 · comprobando módulos…</p>
       </div>
     </div>
   </section>
@@ -65,7 +65,7 @@
       <button id="hostPrizeBtn">Dar premio</button>
     </div>
     <div id="toast" class="toast"></div>
-    <div class="version">v0.6.6</div>
+    <div class="version">v0.6.7</div>
   </section>
 
   <section id="playerView" class="view player-view">
@@ -75,18 +75,18 @@
       <span id="phoneConn" class="phone-conn">●</span>
     </header>
     <main id="phoneStage" class="phone-stage"></main>
-    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.6</span></footer>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.7</span></footer>
   </section>
 </div>
-<script type="module" src="./dice-debug.js?v=0.6.6"></script>
+<script type="module" src="./dice-debug.js?v=0.6.7"></script>
 <script type="module">
   const boot = document.querySelector('#bootStatus');
-  const setBoot = text => { if (boot) boot.textContent = `BUILD ANGU-066 · ${text}`; };
+  const setBoot = text => { if (boot) boot.textContent = `BUILD ANGU-067 · ${text}`; };
   const fail = (stage, error) => {
     console.error(`[Angu boot:${stage}]`, error);
     const msg = String(error?.message || error || 'error desconocido').slice(0, 180);
     if (boot) {
-      boot.textContent = `BUILD ANGU-066 · ERROR [${stage}]: ${msg}`;
+      boot.textContent = `BUILD ANGU-067 · ERROR [${stage}]: ${msg}`;
       boot.style.color = '#ffb4b4';
     }
     throw error;
@@ -100,28 +100,28 @@
   try {
     await test('THREE', 'Three.js', () => import('three'));
     await test('GLTF', 'GLTFLoader', () => import('three/addons/loaders/GLTFLoader.js'));
-    await test('NETWORK', 'módulo de red', () => import('./star-room.js?v=0.6.6'));
-    await test('CARRERA', 'Carrera de Mentes', () => import('./carrera-de-mentes-bank.js?v=0.6.6'));
-    await test('TABU1', 'Tabú 1', () => import('./tabu-1.js?v=0.6.6'));
-    await test('TABU2', 'Tabú 2', () => import('./tabu-2.js?v=0.6.6'));
-    await test('TABU3', 'Tabú 3', () => import('./tabu-3.js?v=0.6.6'));
-    await test('TABU4', 'Tabú 4', () => import('./tabu-4.js?v=0.6.6'));
-    await test('TABU5', 'Tabú 5', () => import('./tabu-5.js?v=0.6.6'));
-    await test('TABU6', 'Tabú 6', () => import('./tabu-6.js?v=0.6.6'));
-    await test('TABU7', 'Tabú 7', () => import('./tabu-7.js?v=0.6.6'));
-    await test('TABU8', 'Tabú 8', () => import('./tabu-8.js?v=0.6.6'));
-    await test('TABU', 'Tabú combinado', () => import('./tabu-bank.js?v=0.6.6'));
-    await test('DRAW_MIME', 'Dibujo y mímica', () => import('./draw-mime-bank.js?v=0.6.6'));
-    await test('BANK', 'banco combinado', () => import('./challenge-bank.js?v=0.6.6'));
+    await test('NETWORK', 'módulo de red', () => import('./star-room.js?v=0.6.7'));
+    await test('CARRERA', 'Carrera de Mentes', () => import('./carrera-de-mentes-bank.js?v=0.6.7'));
+    await test('TABU1', 'Tabú 1', () => import('./tabu-1.js?v=0.6.7'));
+    await test('TABU2', 'Tabú 2', () => import('./tabu-2.js?v=0.6.7'));
+    await test('TABU3', 'Tabú 3', () => import('./tabu-3.js?v=0.6.7'));
+    await test('TABU4', 'Tabú 4', () => import('./tabu-4.js?v=0.6.7'));
+    await test('TABU5', 'Tabú 5', () => import('./tabu-5.js?v=0.6.7'));
+    await test('TABU6', 'Tabú 6', () => import('./tabu-6.js?v=0.6.7'));
+    await test('TABU7', 'Tabú 7', () => import('./tabu-7.js?v=0.6.7'));
+    await test('TABU8', 'Tabú 8', () => import('./tabu-8.js?v=0.6.7'));
+    await test('TABU', 'Tabú combinado', () => import('./tabu-bank.js?v=0.6.7'));
+    await test('DRAW_MIME', 'Dibujo y mímica', () => import('./draw-mime-bank.js?v=0.6.7'));
+    await test('BANK', 'banco combinado', () => import('./challenge-bank.js?v=0.6.7'));
     setBoot('módulos OK · cargando juego…');
 
     try {
-      await import('./app-rules.js?v=0.6.6');
+      await import('./app-rules.js?v=0.6.7');
       setBoot('juego cargado ✓');
     } catch (rulesError) {
       console.error('[Angu] app-rules.js falló; probando app.js base.', rulesError);
       try {
-        await import('./app.js?v=0.6.6');
+        await import('./app.js?v=0.6.7');
         setBoot('juego base cargado ✓ · reglas extra fallaron');
       } catch (appError) {
         fail('APP', appError);
@@ -129,7 +129,7 @@
     }
   } catch {}
 </script>
-<script src="./action-visibility.js?v=0.6.6"></script>
+<script src="./action-visibility.js?v=0.6.7"></script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     const p = new URLSearchParams(location.search);
