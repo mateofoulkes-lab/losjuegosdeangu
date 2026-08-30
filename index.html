@@ -12,7 +12,7 @@
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
-      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.3"
+      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.4"
     }
   }
   </script>
@@ -35,23 +35,20 @@
           </div>
         </div>
         <p class="small muted">La pantalla que crea la sala será el tablero/admin. Cada celular se conecta directamente a ella por WebRTC; si están en el mismo Wi‑Fi, el tráfico del juego puede ir por la red local.</p>
-        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-063 · iniciando juego…</p>
+        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-064 · comprobando módulos…</p>
       </div>
     </div>
   </section>
 
   <section id="hostView" class="view host-view">
     <div id="sceneWrap"><canvas id="gameCanvas"></canvas></div>
-
     <header class="host-hud">
       <div class="brand-mini">🐾 LOS JUEGOS DE ANGU</div>
       <div class="room-chip">SALA <strong id="hostRoomCode">----</strong></div>
       <div id="hostStatus" class="status-dot">conectando…</div>
     </header>
-
     <aside id="playersLeft" class="player-panel player-panel-left"></aside>
     <aside id="playersRight" class="player-panel player-panel-right"></aside>
-
     <div id="hostCenterCard" class="host-center-card">
       <div id="hostLobby">
         <img src="./FOTO.jpg" alt="Angu" class="lobby-photo" />
@@ -62,14 +59,13 @@
       </div>
       <div id="hostGameInfo" class="hidden"></div>
     </div>
-
     <div class="host-tools">
       <button id="hostNextBtn">Siguiente turno</button>
       <button id="hostMoveBtn">Mover +1</button>
       <button id="hostPrizeBtn">Dar premio</button>
     </div>
     <div id="toast" class="toast"></div>
-    <div class="version">v0.6.3</div>
+    <div class="version">v0.6.4</div>
   </section>
 
   <section id="playerView" class="view player-view">
@@ -79,36 +75,50 @@
       <span id="phoneConn" class="phone-conn">●</span>
     </header>
     <main id="phoneStage" class="phone-stage"></main>
-    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.3</span></footer>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.4</span></footer>
   </section>
 </div>
-<script type="module" src="./dice-debug.js?v=0.6.3"></script>
+<script type="module" src="./dice-debug.js?v=0.6.4"></script>
 <script type="module">
   const boot = document.querySelector('#bootStatus');
-  const markReady = () => { if (boot) boot.textContent = 'BUILD ANGU-063 · juego cargado ✓'; };
-  const markError = error => {
-    console.error('[Angu boot]', error);
+  const setBoot = text => { if (boot) boot.textContent = `BUILD ANGU-064 · ${text}`; };
+  const fail = (stage, error) => {
+    console.error(`[Angu boot:${stage}]`, error);
+    const msg = String(error?.message || error || 'error desconocido').slice(0, 180);
     if (boot) {
-      const msg = String(error?.message || error || 'error desconocido').slice(0, 180);
-      boot.textContent = `BUILD ANGU-063 · ERROR: ${msg}`;
+      boot.textContent = `BUILD ANGU-064 · ERROR [${stage}]: ${msg}`;
       boot.style.color = '#ffb4b4';
     }
+    throw error;
+  };
+  const test = async (stage, label, importer) => {
+    setBoot(`probando ${label}…`);
+    try { await importer(); }
+    catch (error) { fail(stage, error); }
   };
 
-  import('./app-rules.js?v=0.6.3').then(markReady).catch(async error => {
-    console.error('[Angu] No se pudo aplicar app-rules.js; cargando app.js base.', error);
+  try {
+    await test('THREE', 'Three.js', () => import('three'));
+    await test('GLTF', 'GLTFLoader', () => import('three/addons/loaders/GLTFLoader.js'));
+    await test('NETWORK', 'módulo de red', () => import('./star-room.js?v=0.6.4'));
+    await test('BANK', 'bancos de cartas', () => import('./challenge-bank.js?v=0.6.4'));
+    setBoot('módulos OK · cargando juego…');
+
     try {
-      await import('./app.js?v=0.6.3');
-      markReady();
-    } catch (fallbackError) {
-      console.error('[Angu] Tampoco se pudo cargar app.js base.', fallbackError);
-      markError(fallbackError);
-      const status = document.querySelector('#hostStatus');
-      if (status) status.textContent = 'error al cargar juego';
+      await import('./app-rules.js?v=0.6.4');
+      setBoot('juego cargado ✓');
+    } catch (rulesError) {
+      console.error('[Angu] app-rules.js falló; probando app.js base.', rulesError);
+      try {
+        await import('./app.js?v=0.6.4');
+        setBoot('juego base cargado ✓ · reglas extra fallaron');
+      } catch (appError) {
+        fail('APP', appError);
+      }
     }
-  });
+  } catch {}
 </script>
-<script src="./action-visibility.js?v=0.6.3"></script>
+<script src="./action-visibility.js?v=0.6.4"></script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     const p = new URLSearchParams(location.search);
