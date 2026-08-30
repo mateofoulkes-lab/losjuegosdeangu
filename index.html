@@ -12,7 +12,7 @@
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
-      "https://esm.sh/trystero@0.25.3": "./star-room.js"
+      "https://esm.sh/trystero@0.25.3": "./star-room.js?v=0.6.3"
     }
   }
   </script>
@@ -35,6 +35,7 @@
           </div>
         </div>
         <p class="small muted">La pantalla que crea la sala será el tablero/admin. Cada celular se conecta directamente a ella por WebRTC; si están en el mismo Wi‑Fi, el tráfico del juego puede ir por la red local.</p>
+        <p id="bootStatus" class="small muted" style="margin-top:12px">BUILD ANGU-063 · iniciando juego…</p>
       </div>
     </div>
   </section>
@@ -68,7 +69,7 @@
       <button id="hostPrizeBtn">Dar premio</button>
     </div>
     <div id="toast" class="toast"></div>
-    <div class="version">v0.6.2</div>
+    <div class="version">v0.6.3</div>
   </section>
 
   <section id="playerView" class="view player-view">
@@ -78,23 +79,36 @@
       <span id="phoneConn" class="phone-conn">●</span>
     </header>
     <main id="phoneStage" class="phone-stage"></main>
-    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.2</span></footer>
+    <footer class="phone-footer"><span id="identityText"></span><span>v0.6.3</span></footer>
   </section>
 </div>
-<script type="module" src="./dice-debug.js"></script>
+<script type="module" src="./dice-debug.js?v=0.6.3"></script>
 <script type="module">
-  import('./app-rules.js?v=0.6.2').catch(async error => {
+  const boot = document.querySelector('#bootStatus');
+  const markReady = () => { if (boot) boot.textContent = 'BUILD ANGU-063 · juego cargado ✓'; };
+  const markError = error => {
+    console.error('[Angu boot]', error);
+    if (boot) {
+      const msg = String(error?.message || error || 'error desconocido').slice(0, 180);
+      boot.textContent = `BUILD ANGU-063 · ERROR: ${msg}`;
+      boot.style.color = '#ffb4b4';
+    }
+  };
+
+  import('./app-rules.js?v=0.6.3').then(markReady).catch(async error => {
     console.error('[Angu] No se pudo aplicar app-rules.js; cargando app.js base.', error);
     try {
-      await import('./app.js?v=0.6.2');
+      await import('./app.js?v=0.6.3');
+      markReady();
     } catch (fallbackError) {
       console.error('[Angu] Tampoco se pudo cargar app.js base.', fallbackError);
+      markError(fallbackError);
       const status = document.querySelector('#hostStatus');
       if (status) status.textContent = 'error al cargar juego';
     }
   });
 </script>
-<script src="./action-visibility.js"></script>
+<script src="./action-visibility.js?v=0.6.3"></script>
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     const p = new URLSearchParams(location.search);
