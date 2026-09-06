@@ -22,6 +22,7 @@ const tokenKey='angu-player-token-v1',nameKey='angu-player-name-v1';
 let playerToken=localStorage.getItem(tokenKey)||crypto.randomUUID();localStorage.setItem(tokenKey,playerToken);
 let playerName=localStorage.getItem(nameKey)||'';
 let room=null,actions=null,roomCode='',isHost=false,hostPeer=null,setupTimer=null,resultTimer=null;
+let nameDraft=playerName;
 const game={phase:'lobby',turn:0,round:1,roll:null,winner:null,players:[],challenge:null,buzzerWinner:null,message:'',revision:0,setupRemaining:0,landing:null,steal:null,lastChallengeKey:''};
 
 const cleanCode=v=>(v||'').toUpperCase().replace(/[^A-Z]/g,'').slice(0,4);
@@ -55,9 +56,18 @@ function connect(code,host){
  actions.hello.onMessage=(d,{peerId})=>{
    if(!isHost||!d?.token)return;
    let p=game.players.find(x=>x.token===d.token);
-   if(!p){if(game.players.length>=8)return;p={token:d.token,peerId,name:(d.name||`Jugador ${game.players.length+1}`).slice(0,18),color:null,piece:null,pos:0,prizes:[],connected:true};game.players.push(p);toast(`${p.name} entró 🐾`)}
-   else{p.peerId=peerId;p.connected=true;if(d.name)p.name=d.name.slice(0,18)}
-   sync()
+   let changed=false;
+   if(!p){
+     if(game.players.length>=8)return;
+     p={token:d.token,peerId,name:(d.name||`Jugador ${game.players.length+1}`).slice(0,18),color:null,piece:null,pos:0,prizes:[],connected:true};
+     game.players.push(p);changed=true;toast(`${p.name} entró 🐾`);
+   }else{
+     if(p.peerId!==peerId){p.peerId=peerId;changed=true}
+     if(!p.connected){p.connected=true;changed=true}
+     const incomingName=(d.name||'').trim().slice(0,18);
+     if(incomingName&&incomingName!==p.name){p.name=incomingName;changed=true}
+   }
+   if(changed)sync();
  };
  actions.state.onMessage=(d,{peerId})=>{if(isHost||!d)return;hostPeer=peerId;Object.assign(game,d);$('#phoneConn').style.color='#50e38a';renderPhone()};
  actions.intent.onMessage=(d,{peerId})=>{if(isHost)handleIntent(d,peerId)};
@@ -190,7 +200,31 @@ function hookJudge(){const ok=$('#okJudge'),bad=$('#badJudge');if(ok)ok.onclick=
 function renderPhone(){
  const stage=$('#phoneStage'),p=me();$('#identityText').textContent=p?`${p.name}${Number.isInteger(p.color)?` · ${COLOR_NAMES[p.color]}`:''}`:'Jugador';
  if(!p){stage.innerHTML='<div class="phone-card"><div class="wait-icon">🐾</div><h2>Entrando…</h2><p>Buscando la pantalla por Trystero…</p></div>';return}
- if(game.phase==='lobby'){stage.innerHTML=`<div class="phone-card"><h2>Tu nombre</h2><input id="nameEdit" class="name-input" maxlength="18" value="${esc(p.name)}"><button id="saveProfile" class="primary big setup-save">Listo</button><p>La ficha y el color se eligen cuando empieza la partida.</p><small>● conexión P2P</small></div>`;$('#saveProfile').onclick=()=>{playerName=($('#nameEdit').value||p.name).trim().slice(0,18);localStorage.setItem(nameKey,playerName);sendIntent('profile',{name:playerName})};return}
+ if(game.phase==='lobby'){
+   const existing=$('#nameEdit');
+   if(existing){
+     // No reconstruir el formulario mientras el usuario escribe: preserva foco y teclado móvil.
+     $('#identityText').textContent=p.name||'Jugador';
+     return;
+   }
+   nameDraft=nameDraft||playerName||p.name||'';
+   stage.innerHTML=`<div class="phone-card"><h2>Tu nombre</h2><input id="nameEdit" class="name-input" maxlength="18" autocomplete="name" enterkeyhint="done" value="${esc(nameDraft)}"><button id="saveProfile" class="primary big setup-save">Listo</button><p id="profileStatus">La ficha y el color se eligen cuando empieza la partida.</p><small>● conexión P2P</small></div>`;
+   const input=$('#nameEdit'),btn=$('#saveProfile'),status=$('#profileStatus');
+   input.addEventListener('input',()=>{nameDraft=input.value});
+   const saveProfile=()=>{
+     const next=(input.value||p.name||'Jugador').trim().slice(0,18);
+     if(!next)return;
+     nameDraft=next;playerName=next;localStorage.setItem(nameKey,playerName);
+     btn.disabled=true;btn.textContent='✓ Listo';
+     status.textContent='Nombre guardado. Esperando a que arranque la partida.';
+     sendIntent('profile',{name:playerName});
+     sendHello();
+     input.blur();
+   };
+   btn.onclick=saveProfile;
+   input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveProfile()}});
+   return
+ }
  if(game.phase==='selection-countdown'){stage.innerHTML=`<div class="phone-card"><div class="setup-countdown">${game.setupRemaining}</div><h2>¡Preparado!</h2><p>Cuando llegue a cero, elegí rápido.</p></div>`;return}
  if(game.phase==='selection'){
    const usedColors=new Set(game.players.filter(x=>x.token!==p.token&&Number.isInteger(x.color)).map(x=>x.color)),usedPieces=new Set(game.players.filter(x=>x.token!==p.token&&Number.isInteger(x.piece)).map(x=>x.piece));
